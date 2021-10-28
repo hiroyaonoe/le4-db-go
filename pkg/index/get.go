@@ -11,13 +11,13 @@ import (
 func Get(c *gin.Context) {
 	db, err := db.NewDB()
 	if err != nil {
-		c.String(http.StatusInternalServerError, "internal server error")
+		c.String(http.StatusInternalServerError, err.Error())
 	}
 
 	threads := []thread.Thread{}
 	err = db.Select(&threads, "SELECT thread_id, title FROM threads")
 	if err != nil {
-		c.String(http.StatusInternalServerError, "internal server error")
+		c.String(http.StatusInternalServerError, err.Error())
 	}
 
 	c.HTML(http.StatusOK, "index.html", gin.H{
