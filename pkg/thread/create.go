@@ -24,5 +24,5 @@ func Create(c *gin.Context) {
 	thread.ThreadID = ids[0]
 
 	id := strconv.Itoa(thread.ThreadID)
-	c.Redirect(http.StatusMovedPermanently, "thread/" + id)
+	c.Redirect(http.StatusMovedPermanently, "thread/"+id)
 }
