@@ -12,9 +12,10 @@ func main() {
 	e.LoadHTMLGlob("view/*.html")
 
 	e.GET("", index.Get)
-	
+
 	th := e.Group("/thread")
 	th.POST("", thread.Create)
+	th.GET("/:thread_id", thread.Get)
 
 	e.Run(config.Port())
 }
