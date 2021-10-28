@@ -15,7 +15,7 @@
         {{range $i, $v := .threads}}
         <tr class="user">
             <td>{{$v.ThreadID}}</td>
-            <td><a href="/thread/{{$i}}">{{$v.Title}}</a></td>
+            <td><a href="/thread/{{$v.ThreadID}}">{{$v.Title}}</a></td>
         </tr>
         {{end}}
     </table>
