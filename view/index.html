@@ -1,0 +1,18 @@
+<html>
+<body>
+    <h1>スレッド一覧</h1>
+    <table border="1">
+        <tr>
+            <th>id</th>
+            <th>タイトル</th>
+        </tr>
+
+        {{range $i, $v := .threads}}
+        <tr class="user">
+            <td>{{$v.ThreadID}}</td>
+            <td><a href="/thread/{{$i}}">{{$v.Title}}</a></td>
+        </tr>
+        {{end}}
+    </table>
+</body>
+</html>
