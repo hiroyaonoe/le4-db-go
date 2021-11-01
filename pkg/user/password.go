@@ -89,7 +89,7 @@ func (t *Password) authenticate(plain string) error {
 
 // Scan はデータベースの値をPasswordにマッピングする
 func (t *Password) Scan(value interface{}) error {
-	str, ok := value.([]byte)
+	str, ok := value.(string)
 	if !ok {
 		return fmt.Errorf("Invalid value:%s", value)
 	}
