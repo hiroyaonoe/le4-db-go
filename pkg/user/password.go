@@ -71,18 +71,18 @@ func (t *Password) Encrypt() error {
 Authenticate は２つのトークンが同一のものか判定する
 (tの元となる文字列がplainと等しいかどうか)
 */
-func (t *Password) Authenticate(plain *Password) bool {
+func (t *Password) Authenticate(plain string) bool {
 	return t.authenticate(plain) == nil
 }
 
 // authenticate はBoolではなくエラーを返す
-func (t *Password) authenticate(plain *Password) error {
-	// tはハッシュ化されており，plainはハッシュ化されていないことが必要
-	if !t.is_encrypted || plain.is_encrypted {
+func (t *Password) authenticate(plain string) error {
+	// tはハッシュ化されていることが必要
+	if !t.is_encrypted {
 		return fmt.Errorf("Invalid tokens")
 	}
 	p1 := []byte(t.String())
-	p2 := []byte(plain.String())
+	p2 := []byte(plain)
 
 	return bcrypt.CompareHashAndPassword(p1, p2)
 }
