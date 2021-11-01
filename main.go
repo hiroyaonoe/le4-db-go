@@ -5,6 +5,7 @@ import (
 	"github.com/hiroyaonoe/le4-db-go/config"
 	"github.com/hiroyaonoe/le4-db-go/pkg/index"
 	"github.com/hiroyaonoe/le4-db-go/pkg/thread"
+	"github.com/hiroyaonoe/le4-db-go/pkg/auth"
 )
 
 func main() {
@@ -12,6 +13,8 @@ func main() {
 	e.LoadHTMLGlob("view/*.html")
 
 	e.GET("", index.Get)
+
+	e.GET("/signup", auth.Signup)
 
 	th := e.Group("/thread")
 	th.POST("", thread.Create)
