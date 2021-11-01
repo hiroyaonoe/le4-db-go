@@ -1,6 +1,10 @@
 <html>
 <body>
-    <h1><a href="/login">ログイン・アカウント作成</a></h1>
+    {{ if .user_exists }}
+    <h3>ユーザー名: {{ .user_name }}</h3>
+    {{ else }}
+    <h3><a href="/login">ログイン・アカウント作成</a></h3>
+    {{ end }}
     <h1>スレッドを作成</h1>
     <form action="thread" method="POST">
     スレッド名：<input type="text" name="thread_title"/><br/>

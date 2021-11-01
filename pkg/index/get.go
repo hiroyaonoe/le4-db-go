@@ -20,7 +20,11 @@ func Get(c *gin.Context) {
 		c.String(http.StatusInternalServerError, err.Error())
 	}
 
+	userName, ok := c.Get("UserName")
+
 	c.HTML(http.StatusOK, "index.html", gin.H{
 		"threads": threads,
+		"user_name": userName,
+		"user_exists": ok,
 	})
 }

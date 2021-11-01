@@ -20,6 +20,8 @@ func main() {
 
 	e.LoadHTMLGlob("view/*.html")
 
+	e.Use(auth.Authenticate)
+	
 	e.GET("", index.Get)
 
 	e.GET("/login", login.Get)
