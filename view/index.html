@@ -2,6 +2,7 @@
 <body>
     {{ if .user_exists }}
     <h3>ユーザー名: {{ .user_name }}</h3>
+    <a href="/logout">ログアウト</a>
     {{ else }}
     <h3><a href="/login">ログイン・アカウント作成</a></h3>
     {{ end }}

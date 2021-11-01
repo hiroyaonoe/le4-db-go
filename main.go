@@ -7,6 +7,7 @@ import (
 	"github.com/hiroyaonoe/le4-db-go/config"
 	"github.com/hiroyaonoe/le4-db-go/pkg/auth"
 	"github.com/hiroyaonoe/le4-db-go/pkg/login"
+	"github.com/hiroyaonoe/le4-db-go/pkg/logout"
 	"github.com/hiroyaonoe/le4-db-go/pkg/index"
 	"github.com/hiroyaonoe/le4-db-go/pkg/thread"
 	"github.com/hiroyaonoe/le4-db-go/pkg/user"
@@ -27,6 +28,7 @@ func main() {
 	e.GET("/login", login.Get)
 	e.POST("/login", login.Post)
 	e.GET("/signup", auth.Signup)
+	e.GET("/logout", logout.Get)
 
 	u := e.Group("/user")
 	u.POST("", user.Create)
