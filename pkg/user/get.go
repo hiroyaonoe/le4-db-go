@@ -43,7 +43,7 @@ func Get(c *gin.Context) {
 	}
 
 	c.HTML(http.StatusOK, "user.html", gin.H{
-		"user": user,
+		"user":    user,
 		"threads": threads,
 	})
 }

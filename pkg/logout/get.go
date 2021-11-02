@@ -1,4 +1,5 @@
 package logout
+
 import (
 	"net/http"
 
@@ -8,7 +9,7 @@ import (
 
 func Get(c *gin.Context) {
 	session := sessions.Default(c)
-    session.Clear()
-    session.Save()
+	session.Clear()
+	session.Save()
 	c.HTML(http.StatusOK, "logout.html", gin.H{})
 }

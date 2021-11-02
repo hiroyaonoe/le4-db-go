@@ -7,6 +7,6 @@ import (
 
 func SetSession(c *gin.Context, userID int) {
 	session := sessions.Default(c)
-    session.Set("UserID", userID)
-    session.Save()
+	session.Set("UserID", userID)
+	session.Save()
 }

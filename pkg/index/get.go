@@ -24,9 +24,9 @@ func Get(c *gin.Context) {
 	userName, _ := c.Get("UserName")
 
 	c.HTML(http.StatusOK, "index.html", gin.H{
-		"threads": threads,
-		"user_id": userID,
-		"user_name": userName,
+		"threads":     threads,
+		"user_id":     userID,
+		"user_name":   userName,
 		"user_exists": ok,
 	})
 }
