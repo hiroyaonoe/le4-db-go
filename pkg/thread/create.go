@@ -1,7 +1,6 @@
 package thread
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -49,7 +48,6 @@ func Create(c *gin.Context) {
 	}
 	_, err = tx.NamedExec("INSERT INTO link_categories (thread_id, category_id) VALUES (:thread_id, :category_id)", thread)
 	if err != nil {
-		fmt.Printf("%#v", thread)
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
