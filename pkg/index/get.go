@@ -17,11 +17,11 @@ func Get(c *gin.Context) {
 	}
 
 	threads := []thread.Thread{}
-	query := "SELECT thread_id, title, users.user_id, users.name AS user_name, created_at, categories.category_id, categories.name AS category_name " + 
-		"FROM threads " + 
-		"NATURAL JOIN post_threads " + 
-		"NATURAL JOIN users " + 
-		"NATURAL JOIN link_categories " + 
+	query := "SELECT thread_id, title, users.user_id, users.name AS user_name, created_at, categories.category_id, categories.name AS category_name " +
+		"FROM threads " +
+		"NATURAL JOIN post_threads " +
+		"NATURAL JOIN users " +
+		"NATURAL JOIN link_categories " +
 		"JOIN categories ON categories.category_id = link_categories.category_id"
 	err = db.Select(&threads, query)
 	if err != nil {
@@ -44,7 +44,7 @@ func Get(c *gin.Context) {
 		"user_id":     userID,
 		"user_name":   userName,
 		"user_exists": ok,
-		"categories": categories,
+		"categories":  categories,
 	})
 	return
 }

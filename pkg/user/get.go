@@ -43,12 +43,12 @@ func Get(c *gin.Context) {
 	}
 
 	threadsC := []thread.Thread{}
-	query := "SELECT DISTINCT threads.thread_id, threads.title, post_threads.created_at, users.user_id, users.name AS user_name " + 
-		"FROM post_comments " + 
-		"JOIN comments ON post_comments.thread_id = comments.thread_id AND post_comments.comment_id = comments.comment_id " + 
-		"JOIN threads ON comments.thread_id = threads.thread_id " + 
-		"JOIN post_threads ON threads.thread_id = post_threads.thread_id " + 
-		"JOIN users ON post_threads.user_id = users.user_id " + 
+	query := "SELECT DISTINCT threads.thread_id, threads.title, post_threads.created_at, users.user_id, users.name AS user_name " +
+		"FROM post_comments " +
+		"JOIN comments ON post_comments.thread_id = comments.thread_id AND post_comments.comment_id = comments.comment_id " +
+		"JOIN threads ON comments.thread_id = threads.thread_id " +
+		"JOIN post_threads ON threads.thread_id = post_threads.thread_id " +
+		"JOIN users ON post_threads.user_id = users.user_id " +
 		"WHERE post_comments.user_id = $1"
 	err = db.Select(&threadsC, query, userID)
 	if err != nil {
@@ -57,8 +57,8 @@ func Get(c *gin.Context) {
 	}
 
 	c.HTML(http.StatusOK, "user.html", gin.H{
-		"user":    user,
-		"threads": threads,
+		"user":     user,
+		"threads":  threads,
 		"threadsC": threadsC,
 	})
 	return

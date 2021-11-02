@@ -10,8 +10,8 @@ import (
 	"github.com/hiroyaonoe/le4-db-go/pkg/index"
 	"github.com/hiroyaonoe/le4-db-go/pkg/login"
 	"github.com/hiroyaonoe/le4-db-go/pkg/logout"
-	"github.com/hiroyaonoe/le4-db-go/pkg/signup"
 	"github.com/hiroyaonoe/le4-db-go/pkg/search"
+	"github.com/hiroyaonoe/le4-db-go/pkg/signup"
 	"github.com/hiroyaonoe/le4-db-go/pkg/thread"
 	"github.com/hiroyaonoe/le4-db-go/pkg/user"
 )
@@ -42,7 +42,7 @@ func main() {
 	th.GET("/:thread_id", thread.Get)
 	thAuth := e.Group("/thread", auth.AuthenticateWithRedirect)
 	thAuth.POST("", thread.Create)
-	
+
 	coAuth := e.Group("/thread/:thread_id/comment", auth.AuthenticateWithRedirect)
 	coAuth.POST("", comment.Create)
 

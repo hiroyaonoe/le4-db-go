@@ -23,14 +23,13 @@ func Get(c *gin.Context) {
 	searchQuery := c.Query("query")
 	words := strings.Fields(searchQuery)
 
-	
 	searchCategory := c.Query("category")
 
-	query := "SELECT thread_id, title, created_at, user_id, users.name AS user_name, categories.category_id, categories.name AS category_name " + 
-		"FROM threads " + 
-		"NATURAL JOIN post_threads " + 
-		"NATURAL JOIN users " + 
-		"NATURAL JOIN link_categories " + 
+	query := "SELECT thread_id, title, created_at, user_id, users.name AS user_name, categories.category_id, categories.name AS category_name " +
+		"FROM threads " +
+		"NATURAL JOIN post_threads " +
+		"NATURAL JOIN users " +
+		"NATURAL JOIN link_categories " +
 		"JOIN categories ON categories.category_id = link_categories.category_id "
 
 	var args []interface{}
@@ -44,7 +43,7 @@ func Get(c *gin.Context) {
 		args = make([]interface{}, len(words)+1)
 		args[0] = categoryID
 		for i, v := range words {
-			args[i+1] = "%"+v+"%"
+			args[i+1] = "%" + v + "%"
 		}
 		if len(words) > 0 {
 			likeQuery := make([]string, len(words))
@@ -56,7 +55,7 @@ func Get(c *gin.Context) {
 	} else { // searchCategory == all の場合
 		args = make([]interface{}, len(words))
 		for i, v := range words {
-			args[i] = "%"+v+"%"
+			args[i] = "%" + v + "%"
 		}
 		if len(words) > 0 {
 			likeQuery := make([]string, len(words))
@@ -74,20 +73,20 @@ func Get(c *gin.Context) {
 		return
 	}
 
-	query = "SELECT comments.content, comments.comment_id, comments.thread_id, threads.title AS thread_title, post_comments.created_at, post_comments.user_id, users.name AS user_name " + 
-		"FROM post_comments " + 
-		"JOIN comments ON post_comments.thread_id = comments.thread_id AND post_comments.comment_id = comments.comment_id " + 
-		"JOIN threads ON comments.thread_id = threads.thread_id " + 
-		"JOIN users ON post_comments.user_id = users.user_id " + 
-		"JOIN link_categories ON link_categories.thread_id = threads.thread_id " + 
+	query = "SELECT comments.content, comments.comment_id, comments.thread_id, threads.title AS thread_title, post_comments.created_at, post_comments.user_id, users.name AS user_name " +
+		"FROM post_comments " +
+		"JOIN comments ON post_comments.thread_id = comments.thread_id AND post_comments.comment_id = comments.comment_id " +
+		"JOIN threads ON comments.thread_id = threads.thread_id " +
+		"JOIN users ON post_comments.user_id = users.user_id " +
+		"JOIN link_categories ON link_categories.thread_id = threads.thread_id " +
 		"JOIN categories ON categories.category_id = link_categories.category_id "
-	
+
 	if categoryID >= 0 {
 		query = query + "WHERE categories.category_id = $1 "
 		args = make([]interface{}, len(words)+1)
 		args[0] = categoryID
 		for i, v := range words {
-			args[i+1] = "%"+v+"%"
+			args[i+1] = "%" + v + "%"
 		}
 		if len(words) > 0 {
 			likeQuery := make([]string, len(words))
@@ -99,7 +98,7 @@ func Get(c *gin.Context) {
 	} else { // searchCategory == all の場合
 		args = make([]interface{}, len(words))
 		for i, v := range words {
-			args[i] = "%"+v+"%"
+			args[i] = "%" + v + "%"
 		}
 		if len(words) > 0 {
 			likeQuery := make([]string, len(words))
@@ -116,7 +115,7 @@ func Get(c *gin.Context) {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
-	
+
 	categories := []category.Category{}
 	err = db.Select(&categories, "SELECT category_id, name FROM categories")
 	if err != nil {
@@ -125,8 +124,8 @@ func Get(c *gin.Context) {
 	}
 
 	c.HTML(http.StatusOK, "search.html", gin.H{
-		"threads": threads,
-		"comments": comments,
+		"threads":    threads,
+		"comments":   comments,
 		"categoryID": categoryID,
 		"categories": categories,
 	})
