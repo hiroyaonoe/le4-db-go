@@ -23,7 +23,7 @@ func Get(c *gin.Context) {
 	}
 
 	threads := []Thread{}
-	err = db.Select(&threads, "SELECT thread_id, title, created_at, users.name AS user_name FROM threads NATURAL JOIN post_threads NATURAL JOIN users WHERE thread_id = $1", threadID)
+	err = db.Select(&threads, "SELECT thread_id, title, created_at, user_id, users.name AS user_name FROM threads NATURAL JOIN post_threads NATURAL JOIN users WHERE thread_id = $1", threadID)
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return

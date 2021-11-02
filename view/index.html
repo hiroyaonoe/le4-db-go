@@ -1,7 +1,7 @@
 <html>
 <body>
     {{ if .user_exists }}
-    <h3>ユーザー名: {{ .user_name }}</h3>
+    <h3>ユーザー名: <a href="/user/{{ .user_id }}">{{ .user_name }}</a></h3>
     <a href="/logout">ログアウト</a>
     {{ else }}
     <h3><a href="/login">ログイン・アカウント作成</a></h3>
