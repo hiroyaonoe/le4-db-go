@@ -1,4 +1,4 @@
-package auth
+package signup
 
 import (
 	"net/http"
@@ -6,6 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Signup(c *gin.Context) {
+func Get(c *gin.Context) {
 	c.HTML(http.StatusOK, "signup.html", gin.H{})
 }
