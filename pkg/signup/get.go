@@ -8,4 +8,5 @@ import (
 
 func Get(c *gin.Context) {
 	c.HTML(http.StatusOK, "signup.html", gin.H{})
+	return
 }

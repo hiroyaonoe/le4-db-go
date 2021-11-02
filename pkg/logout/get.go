@@ -12,4 +12,5 @@ func Get(c *gin.Context) {
 	session.Clear()
 	session.Save()
 	c.HTML(http.StatusOK, "logout.html", gin.H{})
+	return
 }

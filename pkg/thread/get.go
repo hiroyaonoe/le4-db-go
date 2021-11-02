@@ -54,4 +54,5 @@ func Get(c *gin.Context) {
 		"thread": thread,
 		"comments": comments,
 	})
+	return
 }

@@ -50,4 +50,5 @@ func Create(c *gin.Context) {
 
 	id := strconv.Itoa(comment.ThreadID)
 	c.Redirect(http.StatusMovedPermanently, "/thread/"+id)
+	return
 }

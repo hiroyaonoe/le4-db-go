@@ -13,6 +13,7 @@ func Create(c *gin.Context) {
 	db, err := db.NewDB()
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
+		return
 	}
 
 	user := User{}
@@ -20,12 +21,14 @@ func Create(c *gin.Context) {
 	user.Password, err = NewPassword(c.PostForm("password"))
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
+		return
 	}
 	user.Role = "member"
 
 	_, err = db.NamedExec("INSERT INTO users (name, password, role) VALUES (:name, :password, :role)", user)
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
+		return
 	}
 	ids := []int{}
 	err = db.Select(&ids, "SELECT user_id FROM users WHERE name = $1", user.Name)
@@ -35,4 +38,5 @@ func Create(c *gin.Context) {
 
 	id := strconv.Itoa(user.UserID)
 	c.Redirect(http.StatusMovedPermanently, "/user/"+id)
+	return
 }

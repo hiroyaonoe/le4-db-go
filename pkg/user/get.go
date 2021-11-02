@@ -61,4 +61,5 @@ func Get(c *gin.Context) {
 		"threads": threads,
 		"threadsC": threadsC,
 	})
+	return
 }
