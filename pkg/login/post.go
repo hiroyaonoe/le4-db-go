@@ -46,5 +46,5 @@ func Post(c *gin.Context) {
 	session.SetSession(c, u.UserID)
 
 	id := strconv.Itoa(u.UserID)
-	c.Redirect(http.StatusMovedPermanently, "user/"+id)
+	c.Redirect(http.StatusMovedPermanently, "/user/"+id)
 }

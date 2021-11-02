@@ -40,5 +40,5 @@ func Create(c *gin.Context) {
 	tx.Commit()
 
 	id := strconv.Itoa(thread.ThreadID)
-	c.Redirect(http.StatusMovedPermanently, "thread/"+id)
+	c.Redirect(http.StatusMovedPermanently, "/thread/"+id)
 }
