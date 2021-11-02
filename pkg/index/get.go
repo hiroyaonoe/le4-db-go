@@ -13,12 +13,20 @@ func Get(c *gin.Context) {
 	db, err := db.NewDB()
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
+		return
 	}
 
 	threads := []thread.Thread{}
-	err = db.Select(&threads, "SELECT thread_id, title, created_at FROM threads NATURAL JOIN post_threads")
+	query := "SELECT thread_id, title, users.user_id, users.name AS user_name, created_at, categories.category_id, categories.name AS category_name " + 
+		"FROM threads " + 
+		"NATURAL JOIN post_threads " + 
+		"NATURAL JOIN users " + 
+		"NATURAL JOIN link_categories " + 
+		"JOIN categories ON categories.category_id = link_categories.category_id"
+	err = db.Select(&threads, query)
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
+		return
 	}
 
 	userID, ok := c.Get("UserID")
@@ -28,6 +36,7 @@ func Get(c *gin.Context) {
 	err = db.Select(&categories, "SELECT category_id, name FROM categories")
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
+		return
 	}
 
 	c.HTML(http.StatusOK, "index.html", gin.H{
@@ -37,4 +46,5 @@ func Get(c *gin.Context) {
 		"user_exists": ok,
 		"categories": categories,
 	})
+	return
 }
