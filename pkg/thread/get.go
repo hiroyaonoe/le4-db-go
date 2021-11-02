@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/hiroyaonoe/le4-db-go/db"
+	"github.com/hiroyaonoe/le4-db-go/pkg/comment"
 )
 
 func Get(c *gin.Context) {
@@ -34,7 +35,16 @@ func Get(c *gin.Context) {
 	}
 	thread := threads[0]
 
+	comments := []comment.Comment{}
+	err = db.Select(&comments, "SELECT comment_id, thread_id, content, created_at, user_id, users.name AS user_name FROM comments NATURAL JOIN post_comments NATURAL JOIN users WHERE thread_id = $1 ORDER BY created_at ASC", threadID)
+	if err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+
 	c.HTML(http.StatusOK, "thread.html", gin.H{
 		"thread": thread,
+		"comments": comments,
 	})
 }
