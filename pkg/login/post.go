@@ -31,7 +31,7 @@ func Post(c *gin.Context) {
 		return
 	}
 	if len(users) == 0 {
-		c.HTML(http.StatusOK, "auth_login.html", gin.H{
+		c.HTML(http.StatusOK, "login.html", gin.H{
 			"message": "ユーザー名かパスワードが間違っています",
 		})
 		return
