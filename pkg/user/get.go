@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/hiroyaonoe/le4-db-go/db"
+	"github.com/hiroyaonoe/le4-db-go/pkg/thread"
 )
 
 func Get(c *gin.Context) {
@@ -34,7 +35,15 @@ func Get(c *gin.Context) {
 	}
 	user := users[0]
 
+	threads := []thread.Thread{}
+	err = db.Select(&threads, "SELECT thread_id, title, created_at FROM post_threads NATURAL JOIN threads WHERE user_id = $1", userID)
+	if err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	c.HTML(http.StatusOK, "user.html", gin.H{
 		"user": user,
+		"threads": threads,
 	})
 }
