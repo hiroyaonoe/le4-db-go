@@ -9,6 +9,12 @@
     <h1>スレッドを作成</h1>
     <form action="/thread" method="POST">
     スレッド名：<input type="text" name="thread_title"/><br/>
+    カテゴリ:
+    <select name="category_id">
+        {{range $i, $v := .categories}}
+        <option value="{{$v.CategoryID}}">{{$v.Name}}</option>
+        {{end}}
+    </select><br/>
     <input type="submit" value="作成"/>
     </form>
     <h1>スレッド一覧</h1>
