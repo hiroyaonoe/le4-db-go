@@ -1,8 +1,15 @@
 <html>
 <body>
     <h1>{{.thread.Title}}</h1>
-    <h3>作成ユーザー: <a href="/user/{{ .thread.UserID }}">{{.thread.UserName}}</a></h3>
+    <h3>作成ユーザー: <a href="/user/{{ .thread.UserID }}">{{ .thread.UserName }}</a></h3>
     <h3>作成日時: {{.thread.CreatedAt}}</h3>
+
+
+    コメント
+    <form action="/thread/{{ .thread.ThreadID }}/comment" method="POST">
+    <textarea name="comment_content" cols="50" rows="10"></textarea><br/>
+    <input type="submit" value="送信"/>
+    </form>
 
     <a href="/">ホームへ戻る</a>
 </body>
