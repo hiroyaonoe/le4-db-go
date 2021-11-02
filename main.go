@@ -32,6 +32,7 @@ func main() {
 
 	u := e.Group("/user")
 	u.POST("", user.Create)
+	u.GET("/:user_id", user.Get)
 
 	th := e.Group("/thread")
 	th.GET("/:thread_id", thread.Get)
