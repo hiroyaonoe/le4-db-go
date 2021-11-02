@@ -39,6 +39,12 @@
     </table>
     <h2>スレッド・コメントを検索</h2>
     <form action="/search" method="GET">
+    <select name="category">
+        <option value="-1" selected>カテゴリ指定なし</option>
+        {{range $i, $v := .categories}}
+        <option value="{{$v.CategoryID}}">{{$v.Name}}</option>
+        {{end}}
+    </select>
     <input type="text" name="query"/>
     <input type="submit" value="検索"/>
     </form>
