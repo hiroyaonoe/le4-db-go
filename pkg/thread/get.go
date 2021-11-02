@@ -36,6 +36,5 @@ func Get(c *gin.Context) {
 
 	c.HTML(http.StatusOK, "thread_get.html", gin.H{
 		"thread": thread,
-		"createdAt": thread.CreatedAt.Local().Format("2006/01/02 15:04:05"),
 	})
 }

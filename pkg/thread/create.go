@@ -18,7 +18,7 @@ func Create(c *gin.Context) {
 	thread := Thread{}
 	thread.Title = c.PostForm("thread_title")
 	thread.UserID = c.GetInt("UserID") // AuthenticateWithRedirectでユーザーの存在確認は済
-	thread.CreatedAt = time.Now()
+	thread.CreatedAt = NewDateTime(time.Now())
 	ids := []int{}
 
 	tx, err := db.Beginx()
