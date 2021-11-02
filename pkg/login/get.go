@@ -7,5 +7,5 @@ import (
 )
 
 func Get(c *gin.Context) {
-	c.HTML(http.StatusOK, "auth_login.html", gin.H{})
+	c.HTML(http.StatusOK, "login.html", gin.H{})
 }
