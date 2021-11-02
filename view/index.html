@@ -16,12 +16,14 @@
         <tr>
             <th>id</th>
             <th>タイトル</th>
+            <th>作成日時</th>
         </tr>
 
         {{range $i, $v := .threads}}
-        <tr class="user">
+        <tr>
             <td>{{$v.ThreadID}}</td>
             <td><a href="/thread/{{$v.ThreadID}}">{{$v.Title}}</a></td>
+            <td>{{$v.CreatedAt}}</a></td>
         </tr>
         {{end}}
     </table>
