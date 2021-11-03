@@ -15,6 +15,9 @@ func Or(b ...Builder) Builder {
 	if len(b) == 0{
 		return &null{}
 	}
+	if len(b) == 1{
+		return b[0]
+	}
 	return &or{b}
 }
 
