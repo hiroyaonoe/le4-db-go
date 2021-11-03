@@ -37,7 +37,7 @@ func Get(c *gin.Context) {
 		return
 	}
 	if categoryID >= 0 {
-		query = query + "WHERE categories.category_id = $1 "
+		query = query + "WHERE categories.category_id = ? "
 		args = make([]interface{}, len(words)+1)
 		args[0] = categoryID
 		for i, v := range words {
@@ -46,7 +46,7 @@ func Get(c *gin.Context) {
 		if len(words) > 0 {
 			likeQuery := make([]string, len(words))
 			for i := 0; i < len(words); i++ {
-				likeQuery[i] = fmt.Sprintf("title LIKE $%d", i+2)
+				likeQuery[i] = "title LIKE ?"
 			}
 			query = query + "AND " + strings.Join(likeQuery, " OR ")
 		}
@@ -58,11 +58,12 @@ func Get(c *gin.Context) {
 		if len(words) > 0 {
 			likeQuery := make([]string, len(words))
 			for i := 0; i < len(words); i++ {
-				likeQuery[i] = fmt.Sprintf("title LIKE $%d", i+1)
+				likeQuery[i] = "title LIKE ?"
 			}
 			query = query + "WHERE " + strings.Join(likeQuery, " OR ")
 		}
 	}
+	query = db.Rebind(query)
 
 	threads := []domain.Thread{}
 	err = db.Select(&threads, query, args...)
@@ -126,5 +127,6 @@ func Get(c *gin.Context) {
 		"comments":   comments,
 		"categoryID": categoryID,
 		"categories": categories,
+		"query": searchQuery,
 	})
 }
