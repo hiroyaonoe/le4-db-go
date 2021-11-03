@@ -44,6 +44,7 @@ func main() {
 	th.GET("/:thread_id", thread.Get)
 	thAuth := e.Group("/thread", auth.AuthenticateWithRedirect)
 	thAuth.POST("", thread.Create)
+	thAuth.DELETE("/:thread_id", thread.Delete)
 
 	coAuth := e.Group("/thread/:thread_id/comment", auth.AuthenticateWithRedirect)
 	coAuth.POST("", comment.Create)

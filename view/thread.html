@@ -4,7 +4,12 @@
     <h5>作成ユーザー: <a href="/user/{{ .thread.UserID }}">{{ .thread.UserName }}</a></h3>
     <h5>作成日時: {{.thread.CreatedAt}}</h3>
     <h5>カテゴリ: <a href="/search?category={{ .thread.CategoryID }}">{{ .thread.CategoryName }}</a></h3>
-    
+    {{ if or (eq .thread.UserID .userID) (eq .userRole "admin") (eq .userRole "owner")}}
+    <form action="/thread/{{ $.thread.ThreadID }}" method="POST">
+    <input type="hidden" name="_method" value="DELETE">
+    <input type="submit" value="スレッドを削除"/>
+    </form>
+    {{ end }}
     {{range $i, $v := .comments}}
     <h4>{{ $i }} : {{ $v.UserName }} [ {{ $v.CreatedAt }} ]</h4>
     {{ if or (eq $v.UserID $.userID) (eq $.userRole "admin") (eq $.userRole "owner")}}
