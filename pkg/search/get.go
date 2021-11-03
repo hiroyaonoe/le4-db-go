@@ -1,7 +1,6 @@
 package search
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -9,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/hiroyaonoe/le4-db-go/db"
 	"github.com/hiroyaonoe/le4-db-go/domain"
+	"github.com/hiroyaonoe/le4-db-go/pkg/builder"
 )
 
 func Get(c *gin.Context) {
@@ -22,6 +22,10 @@ func Get(c *gin.Context) {
 	words := strings.Fields(searchQuery)
 
 	searchCategory := c.Query("category")
+	categoryID, err := strconv.Atoi(searchCategory)
+	if err != nil {
+		categoryID = -1 // all
+	}
 
 	query := "SELECT thread_id, title, created_at, user_id, users.name AS user_name, categories.category_id, categories.name AS category_name " +
 		"FROM threads " +
@@ -30,38 +34,26 @@ func Get(c *gin.Context) {
 		"NATURAL JOIN link_categories " +
 		"JOIN categories ON categories.category_id = link_categories.category_id "
 
-	var args []interface{}
-	categoryID, err := strconv.Atoi(searchCategory)
-	if err != nil {
-		categoryID = -1 // all
+	var categoryBuilder builder.Builder
+	args := make([]interface{}, len(words), len(words)+1)
+	for i, v := range words {
+		args[i] = "%" + v + "%"
 	}
 	if categoryID >= 0 {
-		query = query + "WHERE categories.category_id = ? "
-		args = make([]interface{}, len(words)+1)
-		args[0] = categoryID
-		for i, v := range words {
-			args[i+1] = "%" + v + "%"
-		}
-		if len(words) > 0 {
-			likeQuery := make([]string, len(words))
-			for i := 0; i < len(words); i++ {
-				likeQuery[i] = "title LIKE ?"
-			}
-			query = query + "AND " + strings.Join(likeQuery, " OR ")
-		}
+		args = append(args, categoryID)
+		categoryBuilder = builder.Word("categories.category_id = ?")
 	} else { // searchCategory == -1(all) の場合
-		args = make([]interface{}, len(words))
-		for i, v := range words {
-			args[i] = "%" + v + "%"
-		}
-		if len(words) > 0 {
-			likeQuery := make([]string, len(words))
-			for i := 0; i < len(words); i++ {
-				likeQuery[i] = "title LIKE ?"
-			}
-			query = query + "WHERE " + strings.Join(likeQuery, " OR ")
-		}
+		categoryBuilder = builder.Null()
 	}
+
+	likeBuilders := make([]builder.Builder, len(words))
+	for i := 0; i < len(words); i++ {
+		likeBuilders[i] = builder.Word("title LIKE ?")
+	}
+	queryBuilder := builder.Or(likeBuilders...)
+	queryBuilder = builder.And(queryBuilder, categoryBuilder)
+	queryBuilder = builder.Where(builder.Word(query), queryBuilder)
+	query = queryBuilder.Build()
 	query = db.Rebind(query)
 
 	threads := []domain.Thread{}
@@ -78,34 +70,15 @@ func Get(c *gin.Context) {
 		"JOIN users ON post_comments.user_id = users.user_id " +
 		"JOIN link_categories ON link_categories.thread_id = threads.thread_id " +
 		"JOIN categories ON categories.category_id = link_categories.category_id "
-
-	if categoryID >= 0 {
-		query = query + "WHERE categories.category_id = $1 "
-		args = make([]interface{}, len(words)+1)
-		args[0] = categoryID
-		for i, v := range words {
-			args[i+1] = "%" + v + "%"
-		}
-		if len(words) > 0 {
-			likeQuery := make([]string, len(words))
-			for i := 0; i < len(words); i++ {
-				likeQuery[i] = fmt.Sprintf("comments.content LIKE $%d", i+2)
-			}
-			query = query + "AND " + strings.Join(likeQuery, " OR ")
-		}
-	} else { // searchCategory == all の場合
-		args = make([]interface{}, len(words))
-		for i, v := range words {
-			args[i] = "%" + v + "%"
-		}
-		if len(words) > 0 {
-			likeQuery := make([]string, len(words))
-			for i := 0; i < len(words); i++ {
-				likeQuery[i] = fmt.Sprintf("comments.content LIKE $%d", i+1)
-			}
-			query = query + "WHERE " + strings.Join(likeQuery, " OR ")
-		}
+	
+	for i := 0; i < len(words); i++ {
+		likeBuilders[i] = builder.Word("comments.content LIKE ?")
 	}
+	queryBuilder = builder.Or(likeBuilders...)
+	queryBuilder = builder.And(queryBuilder, categoryBuilder)
+	queryBuilder = builder.Where(builder.Word(query), queryBuilder)
+	query = queryBuilder.Build()
+	query = db.Rebind(query)
 
 	comments := []domain.Comment{}
 	err = db.Select(&comments, query, args...)
