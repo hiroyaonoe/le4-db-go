@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/hiroyaonoe/le4-db-go/db"
-	"github.com/hiroyaonoe/le4-db-go/pkg/datetime"
+	"github.com/hiroyaonoe/le4-db-go/domain"
 )
 
 func Create(c *gin.Context) {
@@ -17,7 +17,7 @@ func Create(c *gin.Context) {
 		return
 	}
 
-	comment := Comment{}
+	comment := domain.Comment{}
 	comment.Content = c.PostForm("comment_content")
 	comment.ThreadID, err = strconv.Atoi(c.Param("thread_id"))
 	if err != nil {
@@ -25,7 +25,7 @@ func Create(c *gin.Context) {
 		return
 	}
 	comment.UserID = c.GetInt("UserID") // AuthenticateWithRedirectでユーザーの存在確認は済
-	comment.CreatedAt = datetime.NewDateTime(time.Now())
+	comment.CreatedAt = domain.NewDateTime(time.Now())
 	ids := []int{}
 
 	tx, err := db.Beginx()

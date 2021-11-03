@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/hiroyaonoe/le4-db-go/db"
-	"github.com/hiroyaonoe/le4-db-go/pkg/thread"
+	"github.com/hiroyaonoe/le4-db-go/domain"
 )
 
 func Get(c *gin.Context) {
@@ -23,7 +23,7 @@ func Get(c *gin.Context) {
 		return
 	}
 
-	users := []User{}
+	users := []domain.User{}
 	err = db.Select(&users, "SELECT * FROM users WHERE user_id = $1", userID)
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
@@ -35,14 +35,14 @@ func Get(c *gin.Context) {
 	}
 	user := users[0]
 
-	threads := []thread.Thread{}
+	threads := []domain.Thread{}
 	err = db.Select(&threads, "SELECT thread_id, title, created_at FROM post_threads NATURAL JOIN threads WHERE user_id = $1", userID)
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	threadsC := []thread.Thread{}
+	threadsC := []domain.Thread{}
 	query := "SELECT DISTINCT threads.thread_id, threads.title, post_threads.created_at, users.user_id, users.name AS user_name " +
 		"FROM post_comments " +
 		"JOIN comments ON post_comments.thread_id = comments.thread_id AND post_comments.comment_id = comments.comment_id " +

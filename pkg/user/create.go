@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/hiroyaonoe/le4-db-go/db"
+	"github.com/hiroyaonoe/le4-db-go/domain"
 	"github.com/hiroyaonoe/le4-db-go/pkg/session"
 )
 
@@ -16,14 +17,14 @@ func Create(c *gin.Context) {
 		return
 	}
 
-	user := User{}
+	user := domain.User{}
 	user.Name = c.PostForm("user_name")
-	user.Password, err = NewPassword(c.PostForm("password"))
+	user.Password, err = domain.NewPassword(c.PostForm("password"))
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
-	user.Role = MEMBER
+	user.Role = domain.MEMBER
 
 	_, err = db.NamedExec("INSERT INTO users (name, password, role) VALUES (:name, :password, :role)", user)
 	if err != nil {

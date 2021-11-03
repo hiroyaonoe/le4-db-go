@@ -6,8 +6,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/hiroyaonoe/le4-db-go/db"
+	"github.com/hiroyaonoe/le4-db-go/domain"
 	"github.com/hiroyaonoe/le4-db-go/pkg/session"
-	"github.com/hiroyaonoe/le4-db-go/pkg/user"
 )
 
 func Post(c *gin.Context) {
@@ -24,7 +24,7 @@ func Post(c *gin.Context) {
 		return
 	}
 
-	users := []user.User{}
+	users := []domain.User{}
 	err = db.Select(&users, "SELECT * FROM users WHERE name = $1", userName)
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())

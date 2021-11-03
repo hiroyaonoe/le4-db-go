@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/hiroyaonoe/le4-db-go/db"
+	"github.com/hiroyaonoe/le4-db-go/domain"
 )
 
 func Delete(c *gin.Context) {
@@ -16,7 +17,7 @@ func Delete(c *gin.Context) {
 		return
 	}
 
-	comment := Comment{}
+	comment := domain.Comment{}
 	comment.CommentID, err = strconv.Atoi(c.Param("comment_id"))
 	if err != nil {
 		c.String(http.StatusBadRequest, err.Error())

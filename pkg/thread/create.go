@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/hiroyaonoe/le4-db-go/db"
-	"github.com/hiroyaonoe/le4-db-go/pkg/datetime"
+	"github.com/hiroyaonoe/le4-db-go/domain"
 )
 
 func Create(c *gin.Context) {
@@ -17,7 +17,7 @@ func Create(c *gin.Context) {
 		return
 	}
 
-	thread := Thread{}
+	thread := domain.Thread{}
 	thread.Title = c.PostForm("thread_title")
 	thread.UserID = c.GetInt("UserID") // AuthenticateWithRedirectでユーザーの存在確認は済
 	thread.CategoryID, err = strconv.Atoi(c.PostForm("category_id"))
@@ -25,7 +25,7 @@ func Create(c *gin.Context) {
 		c.String(http.StatusBadRequest, err.Error())
 		return
 	}
-	thread.CreatedAt = datetime.NewDateTime(time.Now())
+	thread.CreatedAt = domain.NewDateTime(time.Now())
 	ids := []int{}
 
 	tx, err := db.Beginx()

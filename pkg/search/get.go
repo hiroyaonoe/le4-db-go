@@ -8,9 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/hiroyaonoe/le4-db-go/db"
-	"github.com/hiroyaonoe/le4-db-go/pkg/category"
-	"github.com/hiroyaonoe/le4-db-go/pkg/comment"
-	"github.com/hiroyaonoe/le4-db-go/pkg/thread"
+	"github.com/hiroyaonoe/le4-db-go/domain"
 )
 
 func Get(c *gin.Context) {
@@ -66,7 +64,7 @@ func Get(c *gin.Context) {
 		}
 	}
 
-	threads := []thread.Thread{}
+	threads := []domain.Thread{}
 	err = db.Select(&threads, query, args...)
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
@@ -109,14 +107,14 @@ func Get(c *gin.Context) {
 		}
 	}
 
-	comments := []comment.Comment{}
+	comments := []domain.Comment{}
 	err = db.Select(&comments, query, args...)
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	categories := []category.Category{}
+	categories := []domain.Category{}
 	err = db.Select(&categories, "SELECT category_id, name FROM categories")
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())

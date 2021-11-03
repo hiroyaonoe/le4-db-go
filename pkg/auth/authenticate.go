@@ -7,7 +7,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/hiroyaonoe/le4-db-go/db"
-	"github.com/hiroyaonoe/le4-db-go/pkg/user"
+	"github.com/hiroyaonoe/le4-db-go/domain"
 )
 
 func Authenticate(c *gin.Context) {
@@ -35,7 +35,7 @@ func authenticate(c *gin.Context) error {
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 	}
-	users := []user.User{}
+	users := []domain.User{}
 	err = db.Select(&users, "SELECT * FROM users WHERE user_id = $1", userID)
 	if err != nil {
 		return err
