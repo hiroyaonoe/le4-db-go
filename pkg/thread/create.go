@@ -3,11 +3,13 @@ package thread
 import (
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/hiroyaonoe/le4-db-go/db"
 	"github.com/hiroyaonoe/le4-db-go/domain"
+	"github.com/jmoiron/sqlx"
 )
 
 func Create(c *gin.Context) {
@@ -26,6 +28,12 @@ func Create(c *gin.Context) {
 		return
 	}
 	thread.CreatedAt = domain.NewDateTime(time.Now())
+
+	tagNames := strings.Fields(c.PostForm("thread_tags"))
+	tags := make([]domain.Tag, len(tagNames))
+	for i, v := range tagNames {
+		tags[i].Name = v
+	}
 
 	tx, err := db.Beginx()
 	if err != nil {
@@ -50,6 +58,38 @@ func Create(c *gin.Context) {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	if len(tagNames) > 0 {
+		query := "INSERT INTO tags (name) VALUES (:name)" +
+				"ON CONFLICT (name) DO NOTHING" // Bulk Upsert
+		_, err = tx.NamedExec(query, tags)
+		if err != nil {
+			c.String(http.StatusInternalServerError, err.Error())
+			return
+		}
+		query = "SELECT tag_id, name FROM tags WHERE name IN (?)"
+		query, args, err := sqlx.In(query, tagNames)
+		if err != nil {
+			c.String(http.StatusInternalServerError, err.Error())
+			return
+		}
+		query = tx.Rebind(query)
+		tags = []domain.Tag{}
+		err = tx.Select(&tags, query, args...)
+		if err != nil {
+			c.String(http.StatusInternalServerError, err.Error())
+			return
+		}
+		for i := 0; i < len(tags); i++ {
+			tags[i].ThreadID = thread.ThreadID
+		}
+		_, err = tx.NamedExec("INSERT INTO add_tags (thread_id, tag_id) VALUES (:thread_id, :tag_id)", tags)
+		if err != nil {
+			c.String(http.StatusInternalServerError, err.Error())
+			return
+		}
+	}
+
 	tx.Commit()
 
 	id := strconv.Itoa(thread.ThreadID)
