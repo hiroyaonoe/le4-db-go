@@ -26,7 +26,6 @@ func Create(c *gin.Context) {
 	}
 	comment.UserID = c.GetInt("UserID") // AuthenticateWithRedirectでユーザーの存在確認は済
 	comment.CreatedAt = domain.NewDateTime(time.Now())
-	ids := []int{}
 
 	tx, err := db.Beginx()
 	if err != nil {
@@ -35,12 +34,11 @@ func Create(c *gin.Context) {
 	}
 	defer tx.Rollback()
 
-	err = tx.Select(&ids, "INSERT INTO comments (content, thread_id) VALUES ($1, $2) RETURNING comment_id", comment.Content, comment.ThreadID)
+	err = tx.Get(&comment.CommentID, "INSERT INTO comments (content, thread_id) VALUES ($1, $2) RETURNING comment_id", comment.Content, comment.ThreadID)
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
-	comment.CommentID = ids[0]
 	_, err = tx.NamedExec("INSERT INTO post_comments (comment_id, thread_id, user_id, created_at) VALUES (:comment_id, :thread_id, :user_id, :created_at)", comment)
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())

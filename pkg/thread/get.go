@@ -1,6 +1,8 @@
 package thread
 
 import (
+	"database/sql"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -23,7 +25,7 @@ func Get(c *gin.Context) {
 		return
 	}
 
-	threads := []domain.Thread{}
+	thread := domain.Thread{}
 	query := "SELECT thread_id, title, created_at, user_id, users.name AS user_name, categories.category_id, categories.name AS category_name " +
 		"FROM threads " +
 		"NATURAL JOIN post_threads " +
@@ -31,16 +33,15 @@ func Get(c *gin.Context) {
 		"NATURAL JOIN link_categories " +
 		"JOIN categories ON categories.category_id = link_categories.category_id " +
 		"WHERE thread_id = $1"
-	err = db.Select(&threads, query, threadID)
+	err = db.Get(&thread, query, threadID)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			c.String(http.StatusNotFound, fmt.Sprintf("thread %d not found", threadID))
+			return
+		}
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
-	if len(threads) == 0 {
-		c.String(http.StatusNotFound, fmt.Sprintf("thread %d not found", threadID))
-		return
-	}
-	thread := threads[0]
 
 	comments := []domain.Comment{}
 	err = db.Select(&comments, "SELECT comment_id, thread_id, content, created_at, user_id, users.name AS user_name FROM comments NATURAL JOIN post_comments NATURAL JOIN users WHERE thread_id = $1 ORDER BY created_at ASC", threadID)

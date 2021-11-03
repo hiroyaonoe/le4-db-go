@@ -26,7 +26,6 @@ func Create(c *gin.Context) {
 		return
 	}
 	thread.CreatedAt = domain.NewDateTime(time.Now())
-	ids := []int{}
 
 	tx, err := db.Beginx()
 	if err != nil {
@@ -35,12 +34,12 @@ func Create(c *gin.Context) {
 	}
 	defer tx.Rollback()
 
-	err = tx.Select(&ids, "INSERT INTO threads (title) VALUES ($1) RETURNING thread_id", thread.Title)
+	err = tx.Get(&thread.ThreadID, "INSERT INTO threads (title) VALUES ($1) RETURNING thread_id", thread.Title)
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
-	thread.ThreadID = ids[0]
+	
 	_, err = tx.NamedExec("INSERT INTO post_threads (thread_id, user_id, created_at) VALUES (:thread_id, :user_id, :created_at)", thread)
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())

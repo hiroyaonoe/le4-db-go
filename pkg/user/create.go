@@ -31,9 +31,7 @@ func Create(c *gin.Context) {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
-	ids := []int{}
-	err = db.Select(&ids, "SELECT user_id FROM users WHERE name = $1", user.Name)
-	user.UserID = ids[0]
+	err = db.Get(&user.UserID, "SELECT user_id FROM users WHERE name = $1", user.Name)
 
 	session.SetSession(c, user.UserID)
 

@@ -1,6 +1,8 @@
 package login
 
 import (
+	"database/sql"
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -24,28 +26,28 @@ func Post(c *gin.Context) {
 		return
 	}
 
-	users := []domain.User{}
-	err = db.Select(&users, "SELECT * FROM users WHERE name = $1", userName)
+	user := domain.User{}
+	err = db.Get(&user, "SELECT * FROM users WHERE name = $1", userName)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			c.HTML(http.StatusOK, "login.html", gin.H{
+				"message": "ユーザー名かパスワードが間違っています",
+			})
+			return
+		}
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
-	if len(users) == 0 {
-		c.HTML(http.StatusOK, "login.html", gin.H{
-			"message": "ユーザー名かパスワードが間違っています",
-		})
-		return
-	}
-	u := users[0]
-	ok := u.Password.Authenticate(password)
+
+	ok := user.Password.Authenticate(password)
 	if !ok {
 		c.String(http.StatusUnauthorized, "This user is unauthorized")
 		return
 	}
 
-	session.SetSession(c, u.UserID)
+	session.SetSession(c, user.UserID)
 
-	id := strconv.Itoa(u.UserID)
+	id := strconv.Itoa(user.UserID)
 	c.Redirect(http.StatusMovedPermanently, "/user/"+id)
 	return
 }
