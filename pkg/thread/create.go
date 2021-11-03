@@ -47,7 +47,7 @@ func Create(c *gin.Context) {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
-	
+
 	_, err = tx.NamedExec("INSERT INTO post_threads (thread_id, user_id, created_at) VALUES (:thread_id, :user_id, :created_at)", thread)
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
@@ -61,7 +61,7 @@ func Create(c *gin.Context) {
 
 	if len(tagNames) > 0 {
 		query := "INSERT INTO tags (name) VALUES (:name)" +
-				"ON CONFLICT (name) DO NOTHING" // Bulk Upsert
+			"ON CONFLICT (name) DO NOTHING" // Bulk Upsert
 		_, err = tx.NamedExec(query, tags)
 		if err != nil {
 			c.String(http.StatusInternalServerError, err.Error())

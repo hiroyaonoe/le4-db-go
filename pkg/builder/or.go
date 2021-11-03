@@ -12,10 +12,10 @@ func Or(b ...Builder) Builder {
 			return Or(append(b[:i], b[i+1:]...)...)
 		}
 	}
-	if len(b) == 0{
+	if len(b) == 0 {
 		return &null{}
 	}
-	if len(b) == 1{
+	if len(b) == 1 {
 		return b[0]
 	}
 	return &or{b}

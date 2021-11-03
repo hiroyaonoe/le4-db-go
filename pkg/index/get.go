@@ -37,14 +37,14 @@ func Get(c *gin.Context) {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
-	
+
 	tags := []domain.Tag{}
 	err = db.Select(&tags, "SELECT tag_id, name FROM tags")
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
-	
+
 	AddTags := []domain.Tag{}
 	err = db.Select(&AddTags, "SELECT tag_id, name, thread_id FROM tags NATURAL JOIN add_tags")
 	if err != nil {

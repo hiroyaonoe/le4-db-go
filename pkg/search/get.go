@@ -54,7 +54,7 @@ func Get(c *gin.Context) {
 	} else { // searchCategory == -1(all) の場合
 		categoryBuilder = builder.Null()
 	}
-	
+
 	var tagBuilder builder.Builder
 	if tagID >= 0 {
 		args = append(args, tagID)
@@ -109,7 +109,7 @@ func Get(c *gin.Context) {
 		"JOIN link_categories ON link_categories.thread_id = threads.thread_id " +
 		"JOIN categories ON categories.category_id = link_categories.category_id " +
 		"JOIN add_tags ON add_tags.thread_id = threads.thread_id"
-	
+
 	for i := 0; i < len(words); i++ {
 		likeBuilders[i] = builder.Word("comments.content LIKE ?")
 	}
@@ -132,7 +132,7 @@ func Get(c *gin.Context) {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
-	
+
 	tags := []domain.Tag{}
 	err = db.Select(&tags, "SELECT tag_id, name FROM tags")
 	if err != nil {
@@ -145,8 +145,8 @@ func Get(c *gin.Context) {
 		"comments":   comments,
 		"categoryID": categoryID,
 		"categories": categories,
-		"query": searchQuery,
-		"tagID": tagID,
-		"tags": tags,
+		"query":      searchQuery,
+		"tagID":      tagID,
+		"tags":       tags,
 	})
 }

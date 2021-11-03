@@ -56,7 +56,7 @@ func Get(c *gin.Context) {
 	c.HTML(http.StatusOK, "thread.html", gin.H{
 		"thread":   thread,
 		"comments": comments,
-		"userID": userID,
+		"userID":   userID,
 		"userRole": userRole,
 	})
 	return
