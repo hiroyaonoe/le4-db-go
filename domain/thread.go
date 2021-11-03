@@ -8,4 +8,5 @@ type Thread struct {
 	CategoryID   int               `db:"category_id"`
 	CategoryName string            `db:"category_name"`
 	CreatedAt    DateTime `db:"created_at"`
+	Tags         []Tag
 }
