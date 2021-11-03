@@ -50,6 +50,13 @@ func Get(c *gin.Context) {
 		return
 	}
 
+	tags := []domain.Tag{}
+	err = db.Select(&tags, "SELECT tag_id, name FROM tags NATURAL JOIN add_tags WHERE thread_id = $1", threadID)
+	if err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	userID := c.GetInt("UserID")
 	userRole, _ := c.Get("UserRole")
 
@@ -58,6 +65,7 @@ func Get(c *gin.Context) {
 		"comments": comments,
 		"userID":   userID,
 		"userRole": userRole,
+		"tags": tags,
 	})
 	return
 }
