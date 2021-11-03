@@ -1,6 +1,7 @@
 package search
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -28,23 +29,38 @@ func Get(c *gin.Context) {
 		categoryID = -1 // all
 	}
 
-	query := "SELECT thread_id, title, created_at, user_id, users.name AS user_name, categories.category_id, categories.name AS category_name " +
+	searchTag := c.Query("tag")
+	tagID, err := strconv.Atoi(searchTag)
+	if err != nil {
+		tagID = -1 // all
+	}
+
+	query := "SELECT threads.thread_id, title, created_at, user_id, users.name AS user_name, categories.category_id, categories.name AS category_name " +
 		"FROM threads " +
 		"NATURAL JOIN post_threads " +
 		"NATURAL JOIN users " +
 		"NATURAL JOIN link_categories " +
-		"JOIN categories ON categories.category_id = link_categories.category_id "
+		"JOIN categories ON categories.category_id = link_categories.category_id " +
+		"JOIN add_tags ON add_tags.thread_id = threads.thread_id"
 
-	var categoryBuilder builder.Builder
-	args := make([]interface{}, len(words), len(words)+1)
+	args := make([]interface{}, len(words), len(words)+2)
 	for i, v := range words {
 		args[i] = "%" + v + "%"
 	}
+	var categoryBuilder builder.Builder
 	if categoryID >= 0 {
 		args = append(args, categoryID)
 		categoryBuilder = builder.Word("categories.category_id = ?")
 	} else { // searchCategory == -1(all) の場合
 		categoryBuilder = builder.Null()
+	}
+	
+	var tagBuilder builder.Builder
+	if tagID >= 0 {
+		args = append(args, tagID)
+		tagBuilder = builder.Word("add_tags.tag_id = ?")
+	} else { // searchTag == -1(all) の場合
+		tagBuilder = builder.Null()
 	}
 
 	likeBuilders := make([]builder.Builder, len(words))
@@ -52,10 +68,12 @@ func Get(c *gin.Context) {
 		likeBuilders[i] = builder.Word("title LIKE ?")
 	}
 	queryBuilder := builder.Or(likeBuilders...)
-	queryBuilder = builder.And(queryBuilder, categoryBuilder)
+	queryBuilder = builder.And(queryBuilder, categoryBuilder, tagBuilder)
 	queryBuilder = builder.Where(builder.Word(query), queryBuilder)
 	query = queryBuilder.Build()
 	query = db.Rebind(query)
+	log.Println(query)
+	log.Println(args)
 
 	threads := []domain.Thread{}
 	err = db.Select(&threads, query, args...)
@@ -89,13 +107,14 @@ func Get(c *gin.Context) {
 		"JOIN threads ON comments.thread_id = threads.thread_id " +
 		"JOIN users ON post_comments.user_id = users.user_id " +
 		"JOIN link_categories ON link_categories.thread_id = threads.thread_id " +
-		"JOIN categories ON categories.category_id = link_categories.category_id "
+		"JOIN categories ON categories.category_id = link_categories.category_id " +
+		"JOIN add_tags ON add_tags.thread_id = threads.thread_id"
 	
 	for i := 0; i < len(words); i++ {
 		likeBuilders[i] = builder.Word("comments.content LIKE ?")
 	}
 	queryBuilder = builder.Or(likeBuilders...)
-	queryBuilder = builder.And(queryBuilder, categoryBuilder)
+	queryBuilder = builder.And(queryBuilder, categoryBuilder, tagBuilder)
 	queryBuilder = builder.Where(builder.Word(query), queryBuilder)
 	query = queryBuilder.Build()
 	query = db.Rebind(query)
@@ -127,6 +146,7 @@ func Get(c *gin.Context) {
 		"categoryID": categoryID,
 		"categories": categories,
 		"query": searchQuery,
+		"tagID": tagID,
 		"tags": tags,
 	})
 }
