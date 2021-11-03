@@ -33,8 +33,7 @@ func Get(c *gin.Context) {
 	var args []interface{}
 	categoryID, err := strconv.Atoi(searchCategory)
 	if err != nil {
-		c.String(http.StatusBadRequest, err.Error())
-		return
+		categoryID = -1 // all
 	}
 	if categoryID >= 0 {
 		query = query + "WHERE categories.category_id = ? "
@@ -50,7 +49,7 @@ func Get(c *gin.Context) {
 			}
 			query = query + "AND " + strings.Join(likeQuery, " OR ")
 		}
-	} else { // searchCategory == all の場合
+	} else { // searchCategory == -1(all) の場合
 		args = make([]interface{}, len(words))
 		for i, v := range words {
 			args[i] = "%" + v + "%"
