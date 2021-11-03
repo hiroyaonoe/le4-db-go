@@ -38,7 +38,7 @@
             <td><a href="/search?category={{ $v.CategoryID }}">{{ $v.CategoryName }}</a></td>
             <td>
                 {{range $ii, $vv := $v.Tags}}
-                <a href="/search?tag={{ $vv.TagID }}">{{ $vv.Name }}</a>, 
+                <a href="/search?tag={{ $vv.TagID }}">{{ $vv.Name }}</a> 
                 {{end}}
             </td>
         </tr>
@@ -52,7 +52,13 @@
         <option value="{{$v.CategoryID}}">{{$v.Name}}</option>
         {{end}}
     </select>
-    <input type="text" name="query"/>
+    <select name="tag">
+        <option value="-1" selected>タグ指定なし</option>
+        {{range $i, $v := .tags}}
+        <option value="{{$v.TagID}}">{{$v.Name}}</option>
+        {{end}}
+    </select><br/>
+    <input type="text" name="query" placeholder="検索ワード"/>
     <input type="submit" value="検索"/>
     </form>
 

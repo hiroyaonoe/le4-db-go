@@ -9,6 +9,7 @@ import (
 	"github.com/hiroyaonoe/le4-db-go/db"
 	"github.com/hiroyaonoe/le4-db-go/domain"
 	"github.com/hiroyaonoe/le4-db-go/pkg/builder"
+	"github.com/jmoiron/sqlx"
 )
 
 func Get(c *gin.Context) {
@@ -63,6 +64,25 @@ func Get(c *gin.Context) {
 		return
 	}
 
+	AddTags := []domain.Tag{}
+	query = "SELECT tag_id, name, thread_id FROM tags NATURAL JOIN add_tags WHERE thread_id IN (:thread_id)"
+	query, argsT, err := sqlx.Named(query, threads)
+	query, argsT, err = sqlx.In(query, argsT)
+	query = db.Rebind(query)
+	err = db.Select(&AddTags, query, argsT...)
+	if err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+	indexThread := map[int]*domain.Thread{}
+	for i := 0; i < len(threads); i++ {
+		indexThread[threads[i].ThreadID] = &threads[i]
+	}
+	for _, v := range AddTags {
+		t := indexThread[v.ThreadID]
+		t.Tags = append(t.Tags, v)
+	}
+
 	query = "SELECT comments.content, comments.comment_id, comments.thread_id, threads.title AS thread_title, post_comments.created_at, post_comments.user_id, users.name AS user_name " +
 		"FROM post_comments " +
 		"JOIN comments ON post_comments.thread_id = comments.thread_id AND post_comments.comment_id = comments.comment_id " +
@@ -93,6 +113,13 @@ func Get(c *gin.Context) {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
+	
+	tags := []domain.Tag{}
+	err = db.Select(&tags, "SELECT tag_id, name FROM tags")
+	if err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
 
 	c.HTML(http.StatusOK, "search.html", gin.H{
 		"threads":    threads,
@@ -100,5 +127,6 @@ func Get(c *gin.Context) {
 		"categoryID": categoryID,
 		"categories": categories,
 		"query": searchQuery,
+		"tags": tags,
 	})
 }
