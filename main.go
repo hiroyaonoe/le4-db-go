@@ -34,8 +34,9 @@ func main() {
 	u.POST("", user.Create)
 
 	th := e.Group("/thread")
-	th.POST("", thread.Create)
 	th.GET("/:thread_id", thread.Get)
+	thAuth := e.Group("/thread", auth.AuthenticateWithRedirect)
+	thAuth.POST("", thread.Create)
 
 	e.Run(config.Port())
 }
