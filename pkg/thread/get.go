@@ -23,7 +23,7 @@ func Get(c *gin.Context) {
 	}
 
 	threads := []Thread{}
-	err = db.Select(&threads, "SELECT thread_id, title, created_at, users.name AS user_name FROM threads NATURAL JOIN post_threads NATURAL JOIN users WHERE thread_id = $1", threadID)
+	err = db.Select(&threads, "SELECT thread_id, title, created_at, user_id, users.name AS user_name FROM threads NATURAL JOIN post_threads NATURAL JOIN users WHERE thread_id = $1", threadID)
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
@@ -36,6 +36,5 @@ func Get(c *gin.Context) {
 
 	c.HTML(http.StatusOK, "thread_get.html", gin.H{
 		"thread": thread,
-		"createdAt": thread.CreatedAt.Local().Format("2006/01/02 15:04:05"),
 	})
 }

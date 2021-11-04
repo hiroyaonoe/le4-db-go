@@ -15,15 +15,17 @@ func Get(c *gin.Context) {
 	}
 
 	threads := []thread.Thread{}
-	err = db.Select(&threads, "SELECT thread_id, title FROM threads")
+	err = db.Select(&threads, "SELECT thread_id, title, created_at FROM threads NATURAL JOIN post_threads")
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 	}
 
-	userName, ok := c.Get("UserName")
+	userID, ok := c.Get("UserID")
+	userName, _ := c.Get("UserName")
 
 	c.HTML(http.StatusOK, "index.html", gin.H{
 		"threads": threads,
+		"user_id": userID,
 		"user_name": userName,
 		"user_exists": ok,
 	})
