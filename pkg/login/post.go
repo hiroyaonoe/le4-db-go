@@ -30,6 +30,12 @@ func Post(c *gin.Context) {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
+	if len(users) == 0 {
+		c.HTML(http.StatusOK, "auth_login.html", gin.H{
+			"message": "ユーザー名かパスワードが間違っています",
+		})
+		return
+	}
 	u := users[0]
 	ok := u.Password.Authenticate(password)
 	if !ok {
