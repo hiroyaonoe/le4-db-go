@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/hiroyaonoe/le4-db-go/db"
+	"github.com/hiroyaonoe/le4-db-go/pkg/session"
 	"github.com/hiroyaonoe/le4-db-go/pkg/user"
 )
 
@@ -43,14 +43,8 @@ func Post(c *gin.Context) {
 		return
 	}
 
-	SetSession(c, u.UserID)
+	session.SetSession(c, u.UserID)
 
 	id := strconv.Itoa(u.UserID)
 	c.Redirect(http.StatusMovedPermanently, "user/"+id)
-}
-
-func SetSession(c *gin.Context, userID int) {
-	session := sessions.Default(c)
-    session.Set("UserID", userID)
-    session.Save()
 }

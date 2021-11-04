@@ -1,15 +1,12 @@
-package logout
+package session
 
 import (
-	"net/http"
-
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
-func Get(c *gin.Context) {
+func SetSession(c *gin.Context, userID int) {
 	session := sessions.Default(c)
-	session.Clear()
+	session.Set("UserID", userID)
 	session.Save()
-	c.HTML(http.StatusOK, "logout.html", gin.H{})
 }

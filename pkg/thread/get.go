@@ -34,7 +34,7 @@ func Get(c *gin.Context) {
 	}
 	thread := threads[0]
 
-	c.HTML(http.StatusOK, "thread_get.html", gin.H{
+	c.HTML(http.StatusOK, "thread.html", gin.H{
 		"thread": thread,
 	})
 }

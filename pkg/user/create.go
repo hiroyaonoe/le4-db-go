@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/hiroyaonoe/le4-db-go/db"
+	"github.com/hiroyaonoe/le4-db-go/pkg/session"
 )
 
 func Create(c *gin.Context) {
@@ -29,6 +30,8 @@ func Create(c *gin.Context) {
 	ids := []int{}
 	err = db.Select(&ids, "SELECT user_id FROM users WHERE name = $1", user.Name)
 	user.UserID = ids[0]
+
+	session.SetSession(c, user.UserID)
 
 	id := strconv.Itoa(user.UserID)
 	c.Redirect(http.StatusMovedPermanently, "user/"+id)
