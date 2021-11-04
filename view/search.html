@@ -1,0 +1,51 @@
+<html>
+<body>
+    <h2>スレッド・コメントを検索</h2>
+    <form action="/search" method="GET">
+    <input type="text" name="query" value="{{ .query }}"/>
+    <input type="submit" value="検索"/>
+    </form>
+
+    <h2>検索結果</h2>
+    {{ .query }}
+    <h3>スレッド</h3>
+    <table border="1">
+        <tr>
+            <th>id</th>
+            <th>タイトル</th>
+            <th>作成日時</th>
+        </tr>
+
+        {{range $i, $v := .threads}}
+        <tr>
+            <td>{{$v.ThreadID}}</td>
+            <td><a href="/thread/{{$v.ThreadID}}">{{$v.Title}}</a></td>
+            <td>{{$v.CreatedAt}}</a></td>
+        </tr>
+        {{end}}
+    </table>
+    
+    <h3>コメント</h3>
+    <table border="1">
+        <tr>
+            <th>コメント</th>
+            <th>投稿ユーザー</th>
+            <th>投稿日時</th>
+            <th>スレッドID</th>
+            <th>スレッドタイトル</th>
+        </tr>
+
+        {{range $i, $v := .comments}}
+        <tr>
+            <td>{{$v.Content}}</td>
+            <td><a href="/user/{{$v.UserID}}">{{$v.UserName}}</a></td>
+            <td>{{$v.CreatedAt}}</a></td>
+            <td>{{$v.ThreadID}}</td>
+            <td><a href="/thread/{{$v.ThreadID}}">{{$v.ThreadTitle}}</a></td>
+        </tr>
+        {{end}}
+    </table>
+    <br/>
+    <a href="/">ホームへ戻る</a>
+</body>
+</html>
