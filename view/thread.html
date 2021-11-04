@@ -1,8 +1,19 @@
 <html>
 <body>
     <h1>{{.thread.Title}}</h1>
-    <h3>作成ユーザー: <a href="/user/{{ .thread.UserID }}">{{.thread.UserName}}</a></h3>
-    <h3>作成日時: {{.thread.CreatedAt}}</h3>
+    <h5>作成ユーザー: <a href="/user/{{ .thread.UserID }}">{{ .thread.UserName }}</a></h3>
+    <h5>作成日時: {{.thread.CreatedAt}}</h3>
+    
+    {{range $i, $v := .comments}}
+    <h4>{{ $i }} : {{ $v.UserName }} [ {{ $v.CreatedAt }} ]</h4>
+    {{ $v.Content }}
+    {{end}}
+
+    <h3>コメントを投稿</h3>
+    <form action="/thread/{{ .thread.ThreadID }}/comment" method="POST">
+    <textarea name="comment_content" cols="50" rows="10"></textarea><br/>
+    <input type="submit" value="送信"/>
+    </form>
 
     <a href="/">ホームへ戻る</a>
 </body>

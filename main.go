@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/hiroyaonoe/le4-db-go/config"
 	"github.com/hiroyaonoe/le4-db-go/pkg/auth"
+	"github.com/hiroyaonoe/le4-db-go/pkg/comment"
 	"github.com/hiroyaonoe/le4-db-go/pkg/index"
 	"github.com/hiroyaonoe/le4-db-go/pkg/login"
 	"github.com/hiroyaonoe/le4-db-go/pkg/logout"
@@ -39,6 +40,9 @@ func main() {
 	th.GET("/:thread_id", thread.Get)
 	thAuth := e.Group("/thread", auth.AuthenticateWithRedirect)
 	thAuth.POST("", thread.Create)
+	
+	coAuth := e.Group("/thread/:thread_id/comment", auth.AuthenticateWithRedirect)
+	coAuth.POST("", comment.Create)
 
 	e.Run(config.Port())
 }

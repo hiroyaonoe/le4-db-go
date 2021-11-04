@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/hiroyaonoe/le4-db-go/db"
+	"github.com/hiroyaonoe/le4-db-go/pkg/datetime"
 )
 
 func Create(c *gin.Context) {
@@ -18,7 +19,7 @@ func Create(c *gin.Context) {
 	thread := Thread{}
 	thread.Title = c.PostForm("thread_title")
 	thread.UserID = c.GetInt("UserID") // AuthenticateWithRedirectでユーザーの存在確認は済
-	thread.CreatedAt = NewDateTime(time.Now())
+	thread.CreatedAt = datetime.NewDateTime(time.Now())
 	ids := []int{}
 
 	tx, err := db.Beginx()
@@ -39,5 +40,5 @@ func Create(c *gin.Context) {
 	tx.Commit()
 
 	id := strconv.Itoa(thread.ThreadID)
-	c.Redirect(http.StatusMovedPermanently, "thread/"+id)
+	c.Redirect(http.StatusMovedPermanently, "/thread/"+id)
 }

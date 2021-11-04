@@ -19,6 +19,25 @@
         </tr>
         {{end}}
     </table>
+    
+    <h3>コメントを投稿したスレッド一覧</h3>
+    <table border="1">
+        <tr>
+            <th>id</th>
+            <th>タイトル</th>
+            <th>作成ユーザー</th>
+            <th>作成日時</th>
+        </tr>
+
+        {{range $i, $v := .threadsC}}
+        <tr>
+            <td>{{$v.ThreadID}}</td>
+            <td><a href="/thread/{{$v.ThreadID}}">{{$v.Title}}</a></td>
+            <td><a href="/user/{{$v.UserID}}">{{$v.UserName}}</a></td>
+            <td>{{$v.CreatedAt}}</a></td>
+        </tr>
+        {{end}}
+    </table>
     <a href="/">ホームへ戻る</a>
 </body>
 </html>
