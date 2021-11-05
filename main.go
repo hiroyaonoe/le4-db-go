@@ -40,6 +40,7 @@ func main() {
 	ur.GET("/:user_id", user.Get)
 	urAuth := ur.Group("", auth.AuthenticateWithRedirect)
 	urAuth.PUT("/:user_id/role", user.UpdateRole)
+	urAuth.DELETE("/:user_id", user.Delete)
 
 	th := e.Group("/thread")
 	th.GET("/:thread_id", thread.Get)
