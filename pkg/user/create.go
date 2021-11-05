@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/hiroyaonoe/le4-db-go/db"
 	"github.com/hiroyaonoe/le4-db-go/domain"
-	"github.com/hiroyaonoe/le4-db-go/pkg/session"
+	"github.com/hiroyaonoe/le4-db-go/lib/session"
 )
 
 func Create(c *gin.Context) {
