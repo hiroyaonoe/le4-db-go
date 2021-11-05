@@ -42,6 +42,6 @@ func Post(c *gin.Context) {
 
 	session.SetUserID(c, user.UserID)
 
-	c.Redirect(http.StatusMovedPermanently, "/")
+	c.Redirect(http.StatusSeeOther, "/")
 	return
 }

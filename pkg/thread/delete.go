@@ -45,6 +45,6 @@ func Delete(c *gin.Context) {
 		return
 	}
 
-	c.Redirect(http.StatusMovedPermanently, "/")
+	c.Redirect(http.StatusSeeOther, "/")
 	return
 }

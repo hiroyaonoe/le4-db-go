@@ -36,6 +36,6 @@ func Create(c *gin.Context) {
 	session.SetUserID(c, user.UserID)
 
 	id := strconv.Itoa(user.UserID)
-	c.Redirect(http.StatusMovedPermanently, "/user/"+id)
+	c.Redirect(http.StatusSeeOther, "/user/"+id)
 	return
 }
