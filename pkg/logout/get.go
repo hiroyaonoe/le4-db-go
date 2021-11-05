@@ -9,6 +9,8 @@ import (
 
 func Get(c *gin.Context) {
 	session.Clear(c)
-	c.HTML(http.StatusOK, "logout.html", gin.H{})
+	c.HTML(http.StatusOK, "message.html", gin.H{
+		"message": "ログアウトしました",
+	})
 	return
 }
