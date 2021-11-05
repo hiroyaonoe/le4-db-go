@@ -1,7 +1,6 @@
 package comment
 
 import (
-	"log"
 	"net/http"
 	"strconv"
 
@@ -29,8 +28,7 @@ func Delete(c *gin.Context) {
 		return
 	}
 	query := "SELECT comment_id, thread_id, user_id " +
-		"FROM comments " +
-		"NATURAL JOIN post_comments " +
+		"FROM post_comments " +
 		"WHERE comment_id = $1 " +
 		"	AND thread_id = $2"
 	err = db.Get(&comment, query, comment.CommentID, comment.ThreadID)
@@ -42,8 +40,6 @@ func Delete(c *gin.Context) {
 	userID := c.GetInt("UserID")
 	userRole, _ := c.Get("UserRole")
 	if userID != comment.UserID && userRole != domain.ADMIN && userRole != domain.OWNER {
-		log.Printf("userID: %d, comment.UserID: %d, userRole: %s\n", userID, comment.UserID, userRole)
-		log.Printf("%#v\n", comment)
 		c.String(http.StatusUnauthorized, "unauthorized")
 		return
 	}
