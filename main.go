@@ -31,8 +31,9 @@ func main() {
 	e.GET("/login", login.Get)
 	e.POST("/login", login.Post)
 	e.GET("/signup", signup.Get)
-	e.GET("/logout", logout.Get)
 	e.GET("/search", search.Get)
+	eAuth := e.Group("", auth.AuthenticateWithRedirect)
+	eAuth.GET("/logout", logout.Get)
 
 	ur := e.Group("/user")
 	ur.POST("", user.Create)
