@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/hiroyaonoe/le4-db-go/db"
 	"github.com/hiroyaonoe/le4-db-go/domain"
+	"github.com/hiroyaonoe/le4-db-go/pkg/auth"
 )
 
 func Delete(c *gin.Context) {
@@ -37,8 +38,8 @@ func Delete(c *gin.Context) {
 		return
 	}
 
-	userID := c.GetInt("UserID")
-	userRole, _ := c.Get("UserRole")
+	userID := auth.GetUserIDInt(c)
+	userRole := auth.GetUserRole(c)
 	if userID != comment.UserID && userRole != domain.ADMIN && userRole != domain.OWNER {
 		c.String(http.StatusUnauthorized, "unauthorized")
 		return
