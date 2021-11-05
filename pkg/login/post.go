@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"errors"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/hiroyaonoe/le4-db-go/db"
@@ -47,7 +46,6 @@ func Post(c *gin.Context) {
 
 	session.SetUserID(c, user.UserID)
 
-	id := strconv.Itoa(user.UserID)
-	c.Redirect(http.StatusMovedPermanently, "/user/"+id)
+	c.Redirect(http.StatusMovedPermanently, "/")
 	return
 }
