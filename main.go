@@ -1,6 +1,7 @@
 package main
 
 import (
+	method "github.com/bu/gin-method-override"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
@@ -14,7 +15,6 @@ import (
 	"github.com/hiroyaonoe/le4-db-go/pkg/signup"
 	"github.com/hiroyaonoe/le4-db-go/pkg/thread"
 	"github.com/hiroyaonoe/le4-db-go/pkg/user"
-	method "github.com/bu/gin-method-override"
 )
 
 func main() {

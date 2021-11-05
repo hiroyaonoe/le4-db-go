@@ -1,7 +1,7 @@
 package search
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -9,6 +9,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/hiroyaonoe/le4-db-go/db"
 	"github.com/hiroyaonoe/le4-db-go/domain"
+	"github.com/hiroyaonoe/le4-db-go/pkg/builder"
+	"github.com/jmoiron/sqlx"
 )
 
 func Get(c *gin.Context) {
@@ -22,47 +24,56 @@ func Get(c *gin.Context) {
 	words := strings.Fields(searchQuery)
 
 	searchCategory := c.Query("category")
+	categoryID, err := strconv.Atoi(searchCategory)
+	if err != nil {
+		categoryID = -1 // all
+	}
 
-	query := "SELECT thread_id, title, created_at, user_id, users.name AS user_name, categories.category_id, categories.name AS category_name " +
+	searchTag := c.Query("tag")
+	tagID, err := strconv.Atoi(searchTag)
+	if err != nil {
+		tagID = -1 // all
+	}
+
+	query := "SELECT threads.thread_id, title, created_at, user_id, users.name AS user_name, categories.category_id, categories.name AS category_name " +
 		"FROM threads " +
 		"NATURAL JOIN post_threads " +
 		"NATURAL JOIN users " +
 		"NATURAL JOIN link_categories " +
-		"JOIN categories ON categories.category_id = link_categories.category_id "
+		"JOIN categories ON categories.category_id = link_categories.category_id " +
+		"JOIN add_tags ON add_tags.thread_id = threads.thread_id"
 
-	var args []interface{}
-	categoryID, err := strconv.Atoi(searchCategory)
-	if err != nil {
-		c.String(http.StatusBadRequest, err.Error())
-		return
+	args := make([]interface{}, len(words), len(words)+2)
+	for i, v := range words {
+		args[i] = "%" + v + "%"
 	}
+	var categoryBuilder builder.Builder
 	if categoryID >= 0 {
-		query = query + "WHERE categories.category_id = $1 "
-		args = make([]interface{}, len(words)+1)
-		args[0] = categoryID
-		for i, v := range words {
-			args[i+1] = "%" + v + "%"
-		}
-		if len(words) > 0 {
-			likeQuery := make([]string, len(words))
-			for i := 0; i < len(words); i++ {
-				likeQuery[i] = fmt.Sprintf("title LIKE $%d", i+2)
-			}
-			query = query + "AND " + strings.Join(likeQuery, " OR ")
-		}
-	} else { // searchCategory == all の場合
-		args = make([]interface{}, len(words))
-		for i, v := range words {
-			args[i] = "%" + v + "%"
-		}
-		if len(words) > 0 {
-			likeQuery := make([]string, len(words))
-			for i := 0; i < len(words); i++ {
-				likeQuery[i] = fmt.Sprintf("title LIKE $%d", i+1)
-			}
-			query = query + "WHERE " + strings.Join(likeQuery, " OR ")
-		}
+		args = append(args, categoryID)
+		categoryBuilder = builder.Word("categories.category_id = ?")
+	} else { // searchCategory == -1(all) の場合
+		categoryBuilder = builder.Null()
 	}
+
+	var tagBuilder builder.Builder
+	if tagID >= 0 {
+		args = append(args, tagID)
+		tagBuilder = builder.Word("add_tags.tag_id = ?")
+	} else { // searchTag == -1(all) の場合
+		tagBuilder = builder.Null()
+	}
+
+	likeBuilders := make([]builder.Builder, len(words))
+	for i := 0; i < len(words); i++ {
+		likeBuilders[i] = builder.Word("title LIKE ?")
+	}
+	queryBuilder := builder.Or(likeBuilders...)
+	queryBuilder = builder.And(queryBuilder, categoryBuilder, tagBuilder)
+	queryBuilder = builder.Where(builder.Word(query), queryBuilder)
+	query = queryBuilder.Build()
+	query = db.Rebind(query)
+	log.Println(query)
+	log.Println(args)
 
 	threads := []domain.Thread{}
 	err = db.Select(&threads, query, args...)
@@ -71,41 +82,42 @@ func Get(c *gin.Context) {
 		return
 	}
 
+	AddTags := []domain.Tag{}
+	query = "SELECT tag_id, name, thread_id FROM tags NATURAL JOIN add_tags WHERE thread_id IN (:thread_id)"
+	query, argsT, err := sqlx.Named(query, threads)
+	query, argsT, err = sqlx.In(query, argsT)
+	query = db.Rebind(query)
+	err = db.Select(&AddTags, query, argsT...)
+	if err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+	indexThread := map[int]*domain.Thread{}
+	for i := 0; i < len(threads); i++ {
+		indexThread[threads[i].ThreadID] = &threads[i]
+	}
+	for _, v := range AddTags {
+		t := indexThread[v.ThreadID]
+		t.Tags = append(t.Tags, v)
+	}
+
 	query = "SELECT comments.content, comments.comment_id, comments.thread_id, threads.title AS thread_title, post_comments.created_at, post_comments.user_id, users.name AS user_name " +
 		"FROM post_comments " +
 		"JOIN comments ON post_comments.thread_id = comments.thread_id AND post_comments.comment_id = comments.comment_id " +
 		"JOIN threads ON comments.thread_id = threads.thread_id " +
 		"JOIN users ON post_comments.user_id = users.user_id " +
 		"JOIN link_categories ON link_categories.thread_id = threads.thread_id " +
-		"JOIN categories ON categories.category_id = link_categories.category_id "
+		"JOIN categories ON categories.category_id = link_categories.category_id " +
+		"JOIN add_tags ON add_tags.thread_id = threads.thread_id"
 
-	if categoryID >= 0 {
-		query = query + "WHERE categories.category_id = $1 "
-		args = make([]interface{}, len(words)+1)
-		args[0] = categoryID
-		for i, v := range words {
-			args[i+1] = "%" + v + "%"
-		}
-		if len(words) > 0 {
-			likeQuery := make([]string, len(words))
-			for i := 0; i < len(words); i++ {
-				likeQuery[i] = fmt.Sprintf("comments.content LIKE $%d", i+2)
-			}
-			query = query + "AND " + strings.Join(likeQuery, " OR ")
-		}
-	} else { // searchCategory == all の場合
-		args = make([]interface{}, len(words))
-		for i, v := range words {
-			args[i] = "%" + v + "%"
-		}
-		if len(words) > 0 {
-			likeQuery := make([]string, len(words))
-			for i := 0; i < len(words); i++ {
-				likeQuery[i] = fmt.Sprintf("comments.content LIKE $%d", i+1)
-			}
-			query = query + "WHERE " + strings.Join(likeQuery, " OR ")
-		}
+	for i := 0; i < len(words); i++ {
+		likeBuilders[i] = builder.Word("comments.content LIKE ?")
 	}
+	queryBuilder = builder.Or(likeBuilders...)
+	queryBuilder = builder.And(queryBuilder, categoryBuilder, tagBuilder)
+	queryBuilder = builder.Where(builder.Word(query), queryBuilder)
+	query = queryBuilder.Build()
+	query = db.Rebind(query)
 
 	comments := []domain.Comment{}
 	err = db.Select(&comments, query, args...)
@@ -121,10 +133,20 @@ func Get(c *gin.Context) {
 		return
 	}
 
+	tags := []domain.Tag{}
+	err = db.Select(&tags, "SELECT tag_id, name FROM tags")
+	if err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	c.HTML(http.StatusOK, "search.html", gin.H{
 		"threads":    threads,
 		"comments":   comments,
 		"categoryID": categoryID,
 		"categories": categories,
+		"query":      searchQuery,
+		"tagID":      tagID,
+		"tags":       tags,
 	})
 }

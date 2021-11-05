@@ -15,6 +15,7 @@
         <option value="{{$v.CategoryID}}">{{$v.Name}}</option>
         {{end}}
     </select><br/>
+    タグ：<input type="text" name="thread_tags" placeholder="空白区切りで複数指定可能"/><br/>
     <input type="submit" value="作成"/>
     </form>
     <h1>スレッド一覧</h1>
@@ -25,6 +26,7 @@
             <th>作成ユーザー</th>
             <th>作成日時</th>
             <th>カテゴリ</th>
+            <th>タグ</th>
         </tr>
 
         {{range $i, $v := .threads}}
@@ -34,6 +36,11 @@
             <td><a href="/user/{{$v.UserID}}">{{$v.UserName}}</a></td>
             <td>{{$v.CreatedAt}}</a></td>
             <td><a href="/search?category={{ $v.CategoryID }}">{{ $v.CategoryName }}</a></td>
+            <td>
+                {{range $ii, $vv := $v.Tags}}
+                <a href="/search?tag={{ $vv.TagID }}">{{ $vv.Name }}</a> 
+                {{end}}
+            </td>
         </tr>
         {{end}}
     </table>
@@ -45,7 +52,13 @@
         <option value="{{$v.CategoryID}}">{{$v.Name}}</option>
         {{end}}
     </select>
-    <input type="text" name="query"/>
+    <select name="tag">
+        <option value="-1" selected>タグ指定なし</option>
+        {{range $i, $v := .tags}}
+        <option value="{{$v.TagID}}">{{$v.Name}}</option>
+        {{end}}
+    </select><br/>
+    <input type="text" name="query" placeholder="検索ワード"/>
     <input type="submit" value="検索"/>
     </form>
 

@@ -38,12 +38,36 @@ func Get(c *gin.Context) {
 		return
 	}
 
+	tags := []domain.Tag{}
+	err = db.Select(&tags, "SELECT tag_id, name FROM tags")
+	if err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	AddTags := []domain.Tag{}
+	err = db.Select(&AddTags, "SELECT tag_id, name, thread_id FROM tags NATURAL JOIN add_tags")
+	if err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	indexThread := map[int]*domain.Thread{}
+	for i := 0; i < len(threads); i++ {
+		indexThread[threads[i].ThreadID] = &threads[i]
+	}
+	for _, v := range AddTags {
+		t := indexThread[v.ThreadID]
+		t.Tags = append(t.Tags, v)
+	}
+
 	c.HTML(http.StatusOK, "index.html", gin.H{
 		"threads":     threads,
 		"user_id":     userID,
 		"user_name":   userName,
 		"user_exists": ok,
 		"categories":  categories,
+		"tags":        tags,
 	})
 	return
 }
