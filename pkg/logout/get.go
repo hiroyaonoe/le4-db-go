@@ -3,14 +3,12 @@ package logout
 import (
 	"net/http"
 
-	"github.com/gin-contrib/sessions"
+	"github.com/hiroyaonoe/le4-db-go/lib/session"
 	"github.com/gin-gonic/gin"
 )
 
 func Get(c *gin.Context) {
-	session := sessions.Default(c)
-	session.Clear()
-	session.Save()
+	session.Clear(c)
 	c.HTML(http.StatusOK, "logout.html", gin.H{})
 	return
 }

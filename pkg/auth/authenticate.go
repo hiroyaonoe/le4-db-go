@@ -1,13 +1,12 @@
 package auth
 
 import (
-	"fmt"
 	"net/http"
 
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/hiroyaonoe/le4-db-go/db"
 	"github.com/hiroyaonoe/le4-db-go/domain"
+	"github.com/hiroyaonoe/le4-db-go/lib/session"
 )
 
 func Authenticate(c *gin.Context) {
@@ -25,10 +24,9 @@ func AuthenticateWithRedirect(c *gin.Context) {
 }
 
 func authenticate(c *gin.Context) error {
-	session := sessions.Default(c)
-	userID := session.Get("UserID")
-	if userID == nil {
-		return fmt.Errorf("UserID is not setted")
+	userID, err := session.GetUserID(c)
+	if err != nil {
+		return err
 	}
 
 	db, err := db.NewDB()

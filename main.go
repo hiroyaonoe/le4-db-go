@@ -2,10 +2,9 @@ package main
 
 import (
 	method "github.com/bu/gin-method-override"
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"github.com/hiroyaonoe/le4-db-go/config"
+	"github.com/hiroyaonoe/le4-db-go/lib/session"
 	"github.com/hiroyaonoe/le4-db-go/pkg/auth"
 	"github.com/hiroyaonoe/le4-db-go/pkg/comment"
 	"github.com/hiroyaonoe/le4-db-go/pkg/index"
@@ -20,8 +19,7 @@ import (
 func main() {
 	e := gin.Default()
 
-	store := cookie.NewStore([]byte("secret"))
-	e.Use(sessions.Sessions("mysession", store))
+	e.Use(session.NewStore("secret", "mysession"))
 
 	e.LoadHTMLGlob("view/*.html")
 

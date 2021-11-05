@@ -33,7 +33,7 @@ func Create(c *gin.Context) {
 	}
 	err = db.Get(&user.UserID, "SELECT user_id FROM users WHERE name = $1", user.Name)
 
-	session.SetSession(c, user.UserID)
+	session.SetUserID(c, user.UserID)
 
 	id := strconv.Itoa(user.UserID)
 	c.Redirect(http.StatusMovedPermanently, "/user/"+id)
