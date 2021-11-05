@@ -1,6 +1,8 @@
 package user
 
 import (
+	"database/sql"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -23,17 +25,16 @@ func Get(c *gin.Context) {
 		return
 	}
 
-	users := []domain.User{}
-	err = db.Select(&users, "SELECT * FROM users WHERE user_id = $1", userID)
-	if err != nil {
+	user := domain.User{}
+	err = db.Get(&user, "SELECT * FROM users WHERE user_id = $1", userID)
+		if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			c.String(http.StatusNotFound, fmt.Sprintf("user %d not found", userID))
+			return
+		}
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
-	if len(users) == 0 {
-		c.String(http.StatusNotFound, fmt.Sprintf("user %d not found", userID))
-		return
-	}
-	user := users[0]
 
 	threads := []domain.Thread{}
 	err = db.Select(&threads, "SELECT thread_id, title, created_at FROM post_threads NATURAL JOIN threads WHERE user_id = $1", userID)
