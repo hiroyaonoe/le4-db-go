@@ -1,7 +1,21 @@
 <html>
 <body>
     <h1>{{.user.Name}}</h1>
-    権限: {{.user.Role}}<br/>
+    {{if eq .userRole "owner"}}
+    <form action="/user/{{.user.UserID}}/role" method="POST">
+    権限: {{.user.Role}}
+    <select name="new_role">
+        <option value="member" {{ if eq .user.Role "member" }}selected{{ end }} >member</option>
+        <option value="admin" {{ if eq .user.Role "admin" }}selected{{ end }} >admin</option>
+        <option value="owner" {{ if eq .user.Role "owner" }}selected{{ end }} >owner</option>
+    </select>
+    <input type="hidden" name="_method" value="PUT">
+    <input type="submit" value="変更"/>
+    </form>
+    {{else}}
+    権限: {{.user.Role}}
+    {{end}}
+    <br/>
 
     <h3>作成したスレッド一覧</h3>
     <table border="1">
