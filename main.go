@@ -34,17 +34,18 @@ func main() {
 	e.GET("/logout", logout.Get)
 	e.GET("/search", search.Get)
 
-	u := e.Group("/user")
-	u.POST("", user.Create)
-	u.GET("/:user_id", user.Get)
+	ur := e.Group("/user")
+	ur.POST("", user.Create)
+	ur.GET("/:user_id", user.Get)
 
 	th := e.Group("/thread")
 	th.GET("/:thread_id", thread.Get)
-	thAuth := e.Group("/thread", auth.AuthenticateWithRedirect)
+	thAuth := th.Group("", auth.AuthenticateWithRedirect)
 	thAuth.POST("", thread.Create)
 	thAuth.DELETE("/:thread_id", thread.Delete)
 
-	coAuth := e.Group("/thread/:thread_id/comment", auth.AuthenticateWithRedirect)
+	co := e.Group("/thread/:thread_id/comment")
+	coAuth := co.Group("", auth.AuthenticateWithRedirect)
 	coAuth.POST("", comment.Create)
 	coAuth.DELETE("/:comment_id", comment.Delete)
 
