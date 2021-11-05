@@ -1,5 +1,4 @@
-package datetime
-
+package domain
 import (
 	"database/sql/driver"
 	"fmt"

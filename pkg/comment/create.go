@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/hiroyaonoe/le4-db-go/db"
-	"github.com/hiroyaonoe/le4-db-go/pkg/datetime"
+	"github.com/hiroyaonoe/le4-db-go/domain"
 )
 
 func Create(c *gin.Context) {
@@ -17,7 +17,7 @@ func Create(c *gin.Context) {
 		return
 	}
 
-	comment := Comment{}
+	comment := domain.Comment{}
 	comment.Content = c.PostForm("comment_content")
 	comment.ThreadID, err = strconv.Atoi(c.Param("thread_id"))
 	if err != nil {
@@ -25,8 +25,7 @@ func Create(c *gin.Context) {
 		return
 	}
 	comment.UserID = c.GetInt("UserID") // AuthenticateWithRedirectでユーザーの存在確認は済
-	comment.CreatedAt = datetime.NewDateTime(time.Now())
-	ids := []int{}
+	comment.CreatedAt = domain.NewDateTime(time.Now())
 
 	tx, err := db.Beginx()
 	if err != nil {
@@ -35,12 +34,11 @@ func Create(c *gin.Context) {
 	}
 	defer tx.Rollback()
 
-	err = tx.Select(&ids, "INSERT INTO comments (content, thread_id) VALUES ($1, $2) RETURNING comment_id", comment.Content, comment.ThreadID)
+	err = tx.Get(&comment.CommentID, "INSERT INTO comments (content, thread_id) VALUES ($1, $2) RETURNING comment_id", comment.Content, comment.ThreadID)
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
-	comment.CommentID = ids[0]
 	_, err = tx.NamedExec("INSERT INTO post_comments (comment_id, thread_id, user_id, created_at) VALUES (:comment_id, :thread_id, :user_id, :created_at)", comment)
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())

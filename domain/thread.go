@@ -1,8 +1,4 @@
-package thread
-
-import (
-	"github.com/hiroyaonoe/le4-db-go/pkg/datetime"
-)
+package domain
 
 type Thread struct {
 	ThreadID     int               `db:"thread_id"`
@@ -11,5 +7,5 @@ type Thread struct {
 	UserName     string            `db:"user_name"`
 	CategoryID   int               `db:"category_id"`
 	CategoryName string            `db:"category_name"`
-	CreatedAt    datetime.DateTime `db:"created_at"`
+	CreatedAt    DateTime `db:"created_at"`
 }

@@ -1,6 +1,4 @@
-package comment
-
-import "github.com/hiroyaonoe/le4-db-go/pkg/datetime"
+package domain
 
 type Comment struct {
 	CommentID   int               `db:"comment_id"`
@@ -9,5 +7,5 @@ type Comment struct {
 	Content     string            `db:"content"`
 	UserID      int               `db:"user_id"`
 	UserName    string            `db:"user_name"`
-	CreatedAt   datetime.DateTime `db:"created_at"`
+	CreatedAt   DateTime          `db:"created_at"`
 }
