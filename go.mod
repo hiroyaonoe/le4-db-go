@@ -9,6 +9,7 @@ require (
 )
 
 require (
+	github.com/bu/gin-method-override v0.0.0-20210107045130-0be2f37312dc
 	github.com/gin-contrib/sessions v0.0.4
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.13.0 // indirect

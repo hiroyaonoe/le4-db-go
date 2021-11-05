@@ -40,6 +40,9 @@ func authenticate(c *gin.Context) error {
 	if err != nil {
 		return err
 	}
+	if len(users) == 0 {
+		return fmt.Errorf("User not found")
+	}
 	u := users[0]
 
 	c.Set("UserID", u.UserID)

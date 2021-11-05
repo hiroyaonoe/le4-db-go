@@ -23,7 +23,7 @@ func Create(c *gin.Context) {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
-	user.Role = "member"
+	user.Role = MEMBER
 
 	_, err = db.NamedExec("INSERT INTO users (name, password, role) VALUES (:name, :password, :role)", user)
 	if err != nil {

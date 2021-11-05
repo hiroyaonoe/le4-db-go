@@ -49,9 +49,14 @@ func Get(c *gin.Context) {
 		return
 	}
 
+	userID := c.GetInt("UserID")
+	userRole, _ := c.Get("UserRole")
+
 	c.HTML(http.StatusOK, "thread.html", gin.H{
 		"thread":   thread,
 		"comments": comments,
+		"userID": userID,
+		"userRole": userRole,
 	})
 	return
 }

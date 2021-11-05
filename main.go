@@ -14,6 +14,7 @@ import (
 	"github.com/hiroyaonoe/le4-db-go/pkg/signup"
 	"github.com/hiroyaonoe/le4-db-go/pkg/thread"
 	"github.com/hiroyaonoe/le4-db-go/pkg/user"
+	method "github.com/bu/gin-method-override"
 )
 
 func main() {
@@ -24,6 +25,7 @@ func main() {
 
 	e.LoadHTMLGlob("view/*.html")
 
+	e.Use(method.ProcessMethodOverride(e)) // http formでGET, POST以外を受け入れる
 	e.Use(auth.Authenticate)
 
 	e.GET("", index.Get)
@@ -45,6 +47,7 @@ func main() {
 
 	coAuth := e.Group("/thread/:thread_id/comment", auth.AuthenticateWithRedirect)
 	coAuth.POST("", comment.Create)
+	coAuth.DELETE("/:comment_id", comment.Delete)
 
 	e.Run(config.Port())
 }

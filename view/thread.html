@@ -7,8 +7,16 @@
     
     {{range $i, $v := .comments}}
     <h4>{{ $i }} : {{ $v.UserName }} [ {{ $v.CreatedAt }} ]</h4>
+    {{ if or (eq $v.UserID $.userID) (eq $.userRole "admin") (eq $.userRole "owner")}}
+    <form action="/thread/{{ $.thread.ThreadID }}/comment/{{ $v.CommentID }}" method="POST">
     {{ $v.Content }}
-    {{end}}
+    <input type="hidden" name="_method" value="DELETE">
+    <input type="submit" value="削除"/>
+    </form>
+    {{ else }}
+    {{ $v.Content }}
+    {{ end }}
+    {{ end }}
 
     <h3>コメントを投稿</h3>
     <form action="/thread/{{ .thread.ThreadID }}/comment" method="POST">
