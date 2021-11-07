@@ -19,6 +19,10 @@ func Create(c *gin.Context) {
 
 	user := domain.User{}
 	user.Name = c.PostForm("user_name")
+	if user.Name == "" {
+		c.String(http.StatusBadRequest, "user's name cannot be null")
+		return
+	}
 	user.Password, err = domain.NewPassword(c.PostForm("password"))
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
