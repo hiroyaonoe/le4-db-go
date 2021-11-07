@@ -103,6 +103,7 @@ func Get(c *gin.Context) {
 		"comments": comments,
 		"userID":   loginUserID,
 		"userRole": loginUserRole,
+		"is_user_page": true,
 	})
 	return
 }

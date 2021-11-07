@@ -20,33 +20,7 @@
 
     <h2>検索結果</h2>
     <h3>スレッド</h3>
-    <table border="1">
-        <tr>
-            <th>id</th>
-            <th>タイトル</th>
-            <th>コメント数</th>
-            <th>作成ユーザー</th>
-            <th>作成日時</th>
-            <th>カテゴリ</th>
-            <th>タグ</th>
-        </tr>
-
-        {{range $i, $v := .threads}}
-        <tr>
-            <td>{{$v.ThreadID}}</td>
-            <td><a href="/thread/{{$v.ThreadID}}">{{$v.Title}}</a></td>
-            <td>{{$v.NumComment}}</td>
-            <td><a href="/user/{{$v.UserID}}">{{$v.UserName}}</a></td>
-            <td>{{$v.CreatedAt}}</a></td>
-            <td><a href="/search?category={{ $v.CategoryID }}">{{ $v.CategoryName }}</a></td>
-            <td>
-                {{range $ii, $vv := $v.Tags}}
-                <a href="/search?tag={{ $vv.TagID }}">{{ $vv.Name }}</a> 
-                {{end}}
-            </td>
-        </tr>
-        {{end}}
-    </table>
+    {{template "threads" .}}
     
     <h3>コメント</h3>
     <table border="1">
