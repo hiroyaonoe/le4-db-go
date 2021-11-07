@@ -99,13 +99,13 @@ func Get(c *gin.Context) {
 	loginUserName := auth.GetUserName(c)
 	loginUserRole := auth.GetUserRole(c)
 	c.HTML(http.StatusOK, "user.html", gin.H{
-		"user":              user,
-		"threads":           threads,
-		"comments":          comments,
-		"login_user_id":     loginUserID,
-		"login_user_name":   loginUserName,
-		"login_user_role":   loginUserRole,
-		"is_user_page":      true,
+		"user":            user,
+		"threads":         threads,
+		"comments":        comments,
+		"login_user_id":   loginUserID,
+		"login_user_name": loginUserName,
+		"login_user_role": loginUserRole,
+		"is_user_page":    true,
 	})
 	return
 }

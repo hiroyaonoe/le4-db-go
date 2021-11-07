@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	userIDKey = "UserID"
+	userIDKey   = "UserID"
 	userNameKey = "UserName"
 	userRoleKey = "UserRole"
 )
