@@ -85,15 +85,11 @@ func Get(c *gin.Context) {
 		t.NumComment = v.NumComment
 	}
 
-	threadsC := []domain.Thread{}
-	query = "SELECT DISTINCT threads.thread_id, threads.title, post_threads.created_at, users.user_id, users.name AS user_name " +
-		"FROM post_comments " +
-		"JOIN comments ON post_comments.thread_id = comments.thread_id AND post_comments.comment_id = comments.comment_id " +
-		"JOIN threads ON comments.thread_id = threads.thread_id " +
-		"JOIN post_threads ON threads.thread_id = post_threads.thread_id " +
-		"JOIN users ON post_threads.user_id = users.user_id " +
-		"WHERE post_comments.user_id = $1"
-	err = db.Select(&threadsC, query, userID)
+	comments := []domain.Comment{}
+	query = "SELECT content, comment_id, thread_id, thread_title, created_at " +
+		"FROM comments_with_user_thread " +
+		"WHERE user_id = $1"
+	err = db.Select(&comments, query, userID)
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
@@ -104,7 +100,7 @@ func Get(c *gin.Context) {
 	c.HTML(http.StatusOK, "user.html", gin.H{
 		"user":     user,
 		"threads":  threads,
-		"threadsC": threadsC,
+		"comments": comments,
 		"userID":   loginUserID,
 		"userRole": loginUserRole,
 	})

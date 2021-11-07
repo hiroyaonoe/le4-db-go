@@ -51,21 +51,21 @@
         {{end}}
     </table>
     
-    <h3>コメントを投稿したスレッド一覧</h3>
+    <h3>コメント</h3>
     <table border="1">
         <tr>
-            <th>id</th>
-            <th>タイトル</th>
-            <th>作成ユーザー</th>
-            <th>作成日時</th>
+            <th>コメント</th>
+            <th>投稿日時</th>
+            <th>スレッドID</th>
+            <th>スレッドタイトル</th>
         </tr>
 
-        {{range $i, $v := .threadsC}}
+        {{range $i, $v := .comments}}
         <tr>
-            <td>{{$v.ThreadID}}</td>
-            <td><a href="/thread/{{$v.ThreadID}}">{{$v.Title}}</a></td>
-            <td><a href="/user/{{$v.UserID}}">{{$v.UserName}}</a></td>
+            <td>{{$v.Content}}</td>
             <td>{{$v.CreatedAt}}</a></td>
+            <td>{{$v.ThreadID}}</td>
+            <td><a href="/thread/{{$v.ThreadID}}">{{$v.ThreadTitle}}</a></td>
         </tr>
         {{end}}
     </table>
