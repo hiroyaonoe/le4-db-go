@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/hiroyaonoe/le4-db-go/db"
 	"github.com/hiroyaonoe/le4-db-go/domain"
+	"github.com/hiroyaonoe/le4-db-go/pkg/auth"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -21,7 +22,7 @@ func Create(c *gin.Context) {
 
 	thread := domain.Thread{}
 	thread.Title = c.PostForm("thread_title")
-	thread.UserID = c.GetInt("UserID") // AuthenticateWithRedirectでユーザーの存在確認は済
+	thread.UserID = auth.GetUserIDInt(c)
 	thread.CategoryID, err = strconv.Atoi(c.PostForm("category_id"))
 	if err != nil {
 		c.String(http.StatusBadRequest, err.Error())

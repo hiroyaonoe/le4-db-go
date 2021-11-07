@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/hiroyaonoe/le4-db-go/db"
 	"github.com/hiroyaonoe/le4-db-go/domain"
+	"github.com/hiroyaonoe/le4-db-go/pkg/auth"
 )
 
 func Get(c *gin.Context) {
@@ -57,8 +58,8 @@ func Get(c *gin.Context) {
 		return
 	}
 
-	userID := c.GetInt("UserID")
-	userRole, _ := c.Get("UserRole")
+	userID := auth.GetUserIDInt(c)
+	userRole := auth.GetUserRole(c)
 
 	c.HTML(http.StatusOK, "thread.html", gin.H{
 		"thread":   thread,

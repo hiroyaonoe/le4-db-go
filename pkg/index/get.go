@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/hiroyaonoe/le4-db-go/db"
 	"github.com/hiroyaonoe/le4-db-go/domain"
+	"github.com/hiroyaonoe/le4-db-go/pkg/auth"
 )
 
 func Get(c *gin.Context) {
@@ -28,8 +29,8 @@ func Get(c *gin.Context) {
 		return
 	}
 
-	userID, ok := c.Get("UserID")
-	userName, _ := c.Get("UserName")
+	userID, ok := auth.GetUserIDStrWithOk(c)
+	userName := auth.GetUserName(c)
 
 	categories := []domain.Category{}
 	err = db.Select(&categories, "SELECT category_id, name FROM categories")

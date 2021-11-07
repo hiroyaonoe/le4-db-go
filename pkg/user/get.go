@@ -1,6 +1,8 @@
 package user
 
 import (
+	"database/sql"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -8,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/hiroyaonoe/le4-db-go/db"
 	"github.com/hiroyaonoe/le4-db-go/domain"
+	"github.com/hiroyaonoe/le4-db-go/pkg/auth"
 )
 
 func Get(c *gin.Context) {
@@ -23,17 +26,16 @@ func Get(c *gin.Context) {
 		return
 	}
 
-	users := []domain.User{}
-	err = db.Select(&users, "SELECT * FROM users WHERE user_id = $1", userID)
-	if err != nil {
+	user := domain.User{}
+	err = db.Get(&user, "SELECT * FROM users WHERE user_id = $1", userID)
+		if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			c.String(http.StatusNotFound, fmt.Sprintf("user %d not found", userID))
+			return
+		}
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
-	if len(users) == 0 {
-		c.String(http.StatusNotFound, fmt.Sprintf("user %d not found", userID))
-		return
-	}
-	user := users[0]
 
 	threads := []domain.Thread{}
 	err = db.Select(&threads, "SELECT thread_id, title, created_at FROM post_threads NATURAL JOIN threads WHERE user_id = $1", userID)
@@ -56,10 +58,12 @@ func Get(c *gin.Context) {
 		return
 	}
 
+	userRole := auth.GetUserRole(c)
 	c.HTML(http.StatusOK, "user.html", gin.H{
 		"user":     user,
 		"threads":  threads,
 		"threadsC": threadsC,
+		"userRole": userRole,
 	})
 	return
 }

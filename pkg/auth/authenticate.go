@@ -9,13 +9,19 @@ import (
 	"github.com/hiroyaonoe/le4-db-go/lib/session"
 )
 
+const (
+	userIDKey = "UserID"
+	userNameKey = "UserName"
+	userRoleKey = "UserRole"
+)
+
 func Authenticate(c *gin.Context) {
 	authenticate(c)
 	c.Next()
 }
 
 func AuthenticateWithRedirect(c *gin.Context) {
-	_, ok := c.Get("UserID")
+	_, ok := c.Get(userIDKey)
 	if !ok {
 		c.Redirect(http.StatusMovedPermanently, "/login")
 		c.Abort()
@@ -39,8 +45,27 @@ func authenticate(c *gin.Context) error {
 		return err
 	}
 
-	c.Set("UserID", user.UserID)
-	c.Set("UserName", user.Name)
-	c.Set("UserRole", user.Role)
+	c.Set(userIDKey, user.UserID)
+	c.Set(userNameKey, user.Name)
+	c.Set(userRoleKey, user.Role)
 	return nil
+}
+
+func GetUserIDInt(c *gin.Context) int {
+	userID := c.GetInt(userIDKey)
+	return userID
+}
+
+func GetUserIDStrWithOk(c *gin.Context) (interface{}, bool) {
+	return c.Get(userIDKey)
+}
+
+func GetUserName(c *gin.Context) interface{} {
+	userName, _ := c.Get(userNameKey)
+	return userName
+}
+
+func GetUserRole(c *gin.Context) interface{} {
+	userRole, _ := c.Get(userRoleKey)
+	return userRole
 }

@@ -20,10 +20,6 @@ func Post(c *gin.Context) {
 
 	userName := c.PostForm("user_name")
 	password := c.PostForm("password")
-	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
-		return
-	}
 
 	user := domain.User{}
 	err = db.Get(&user, "SELECT * FROM users WHERE name = $1", userName)

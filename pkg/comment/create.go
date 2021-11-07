@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/hiroyaonoe/le4-db-go/db"
 	"github.com/hiroyaonoe/le4-db-go/domain"
+	"github.com/hiroyaonoe/le4-db-go/pkg/auth"
 )
 
 func Create(c *gin.Context) {
@@ -24,7 +25,7 @@ func Create(c *gin.Context) {
 		c.String(http.StatusBadRequest, err.Error())
 		return
 	}
-	comment.UserID = c.GetInt("UserID") // AuthenticateWithRedirectでユーザーの存在確認は済
+	comment.UserID = auth.GetUserIDInt(c)
 	comment.CreatedAt = domain.NewDateTime(time.Now())
 
 	tx, err := db.Beginx()
