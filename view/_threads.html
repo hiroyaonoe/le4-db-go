@@ -3,9 +3,9 @@
     <tr>
         <th>ID</th>
         <th>タイトル</th>
-        <th>コメント数</th>
         {{with .is_user_page}}{{else}}<th>作成ユーザー</th>{{end}}
         <th>作成日時</th>
+        <th>コメント数</th>
         <th>カテゴリ</th>
         <th>タグ</th>
     </tr>
@@ -14,9 +14,9 @@
     <tr>
         <td>{{$v.ThreadID}}</td>
         <td><a href="/thread/{{$v.ThreadID}}">{{$v.Title}}</a></td>
-        <td>{{$v.NumComment}}</td>
         {{with $.is_user_page}}{{else}}<td><a href="/user/{{$v.UserID}}">{{$v.UserName}}</a></td>{{end}}
         <td>{{$v.CreatedAt}}</a></td>
+        <td>{{$v.NumComment}}</td>
         <td><a href="/search?category={{ $v.CategoryID }}">{{ $v.CategoryName }}</a></td>
         <td>
             {{range $ii, $vv := $v.Tags}}
