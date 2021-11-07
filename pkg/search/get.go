@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/hiroyaonoe/le4-db-go/db"
@@ -36,9 +37,14 @@ func Get(c *gin.Context) {
 		tagID = -1 // all
 	}
 
+	searchStartDateStr := c.Query("start_date")
+	searchEndDateStr := c.Query("end_date")
+	jst, _ := time.LoadLocation("Asia/Tokyo")
+	layout := "2006-01-02"
+
 	query := "SELECT thread_id, title, created_at, user_id, user_name, category_id, category_name FROM threads_with_user_category"
 
-	args := make([]interface{}, len(words), len(words)+2)
+	args := make([]interface{}, len(words), len(words)+4)
 	for i, v := range words {
 		args[i] = "%" + v + "%"
 	}
@@ -59,12 +65,28 @@ func Get(c *gin.Context) {
 		tagBuilder = builder.Null()
 	}
 
+	var startDateBuilder builder.Builder
+	if searchStartDate, err := time.ParseInLocation(layout, searchStartDateStr, jst); err == nil {
+		args = append(args, searchStartDate)
+		startDateBuilder = builder.Word("created_at >= ?")
+	} else {
+		startDateBuilder = builder.Null()
+	}
+
+	var endDateBuilder builder.Builder
+	if searchEndDate, err := time.ParseInLocation(layout, searchEndDateStr, jst); err == nil {
+		args = append(args, searchEndDate)
+		endDateBuilder = builder.Word("created_at <= ?")
+	} else {
+		endDateBuilder = builder.Null()
+	}
+
 	likeBuilders := make([]builder.Builder, len(words))
 	for i := 0; i < len(words); i++ {
 		likeBuilders[i] = builder.Word("title LIKE ?")
 	}
 	queryBuilder := builder.Or(likeBuilders...)
-	queryBuilder = builder.And(queryBuilder, categoryBuilder, tagBuilder)
+	queryBuilder = builder.And(queryBuilder, categoryBuilder, tagBuilder, startDateBuilder, endDateBuilder)
 	queryBuilder = builder.Where(builder.Word(query), queryBuilder)
 	query = queryBuilder.Build()
 	query = db.Rebind(query)
@@ -127,7 +149,7 @@ func Get(c *gin.Context) {
 		likeBuilders[i] = builder.Word("content LIKE ?")
 	}
 	queryBuilder = builder.Or(likeBuilders...)
-	queryBuilder = builder.And(queryBuilder, categoryBuilder, tagBuilder)
+	queryBuilder = builder.And(queryBuilder, categoryBuilder, tagBuilder, startDateBuilder, endDateBuilder)
 	queryBuilder = builder.Where(builder.Word(query), queryBuilder)
 	query = queryBuilder.Build()
 	query = db.Rebind(query)
@@ -162,6 +184,8 @@ func Get(c *gin.Context) {
 		"categoryID":      categoryID,
 		"categories":      categories,
 		"query":           searchQuery,
+		"start_date":      searchStartDateStr,
+		"end_date":        searchEndDateStr,
 		"tagID":           tagID,
 		"tags":            tags,
 		"login_user_id":   loginUserID,
