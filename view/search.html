@@ -1,27 +1,28 @@
 {{template "header" .}}
-    <h2>スレッド・コメントを検索</h2>
-    <form action="/search" method="GET">
-    <select name="category">
-        <option value="-1" {{ if eq .categoryID -1 }}selected{{ end }}>カテゴリ指定なし</option>
-        {{range $i, $v := .categories}}
-        <option value="{{$v.CategoryID}}" {{ if eq $.categoryID $v.CategoryID }}selected{{ end }}>{{$v.Name}}</option>
-        {{end}}
-    </select>
-    <select name="tag">
-        <option value="-1" {{ if eq .tagID -1 }}selected{{ end }}>タグ指定なし</option>
-        {{range $i, $v := .tags}}
-        <option value="{{$v.TagID}}" {{ if eq $.tagID $v.TagID }}selected{{ end }}>{{$v.Name}}</option>
-        {{end}}
-    </select><br/>
-    <input type="text" name="query" value="{{ .query }}"/>
-    <input type="submit" value="検索"/>
-    </form>
 
-    <h2>検索結果</h2>
-    <h3>スレッド</h3>
-    {{template "threads" .}}
-    
-    <h3>コメント</h3>
-    {{template "comments" .}}
+<h2>スレッド・コメントを検索</h2>
+<form action="/search" method="GET">
+<select name="category">
+    <option value="-1" {{ if eq .categoryID -1 }}selected{{ end }}>カテゴリ指定なし</option>
+    {{range $i, $v := .categories}}
+    <option value="{{$v.CategoryID}}" {{ if eq $.categoryID $v.CategoryID }}selected{{ end }}>{{$v.Name}}</option>
+    {{end}}
+</select>
+<select name="tag">
+    <option value="-1" {{ if eq .tagID -1 }}selected{{ end }}>タグ指定なし</option>
+    {{range $i, $v := .tags}}
+    <option value="{{$v.TagID}}" {{ if eq $.tagID $v.TagID }}selected{{ end }}>{{$v.Name}}</option>
+    {{end}}
+</select><br/>
+<input type="text" name="query" value="{{ .query }}"/>
+<input type="submit" value="検索"/>
+</form>
+
+<h2>検索結果</h2>
+<h3>スレッド</h3>
+{{template "threads" .}}
+
+<h3>コメント</h3>
+{{template "comments" .}}
 
 {{template "footer"}}

@@ -1,34 +1,35 @@
 {{template "header" .}}
-    <h1>スレッドを作成</h1>
-    <form action="/thread" method="POST">
-    スレッド名：<input type="text" name="thread_title"/><br/>
-    カテゴリ:
-    <select name="category_id">
-        {{range $i, $v := .categories}}
-        <option value="{{$v.CategoryID}}">{{$v.Name}}</option>
-        {{end}}
-    </select><br/>
-    タグ：<input type="text" name="thread_tags" placeholder="空白区切りで複数指定可能"/><br/>
-    <input type="submit" value="作成"/>
-    </form>
-    <h1>スレッド一覧</h1>
-    {{template "threads" .}}
-    <h1>スレッド・コメントを検索</h1>
-    <form action="/search" method="GET">
-    <select name="category">
-        <option value="-1" selected>カテゴリ指定なし</option>
-        {{range $i, $v := .categories}}
-        <option value="{{$v.CategoryID}}">{{$v.Name}}</option>
-        {{end}}
-    </select>
-    <select name="tag">
-        <option value="-1" selected>タグ指定なし</option>
-        {{range $i, $v := .tags}}
-        <option value="{{$v.TagID}}">{{$v.Name}}</option>
-        {{end}}
-    </select><br/>
-    <input type="text" name="query" placeholder="検索ワード"/>
-    <input type="submit" value="検索"/>
-    </form>
+
+<h1>スレッドを作成</h1>
+<form action="/thread" method="POST">
+スレッド名：<input type="text" name="thread_title"/><br/>
+カテゴリ:
+<select name="category_id">
+    {{range $i, $v := .categories}}
+    <option value="{{$v.CategoryID}}">{{$v.Name}}</option>
+    {{end}}
+</select><br/>
+タグ：<input type="text" name="thread_tags" placeholder="空白区切りで複数指定可能"/><br/>
+<input type="submit" value="作成"/>
+</form>
+<h1>スレッド一覧</h1>
+{{template "threads" .}}
+<h1>スレッド・コメントを検索</h1>
+<form action="/search" method="GET">
+<select name="category">
+    <option value="-1" selected>カテゴリ指定なし</option>
+    {{range $i, $v := .categories}}
+    <option value="{{$v.CategoryID}}">{{$v.Name}}</option>
+    {{end}}
+</select>
+<select name="tag">
+    <option value="-1" selected>タグ指定なし</option>
+    {{range $i, $v := .tags}}
+    <option value="{{$v.TagID}}">{{$v.Name}}</option>
+    {{end}}
+</select><br/>
+<input type="text" name="query" placeholder="検索ワード"/>
+<input type="submit" value="検索"/>
+</form>
 </body>
 </html>

@@ -1,13 +1,13 @@
 <html>
 <body>
-    <h1>ログイン</h1>
-    <form action="/login" method="POST">
-    ユーザー名：<input type="text" name="user_name"/><br/>
-    パスワード：<input type="password" name="password"/><br/>
-    <input type="submit" value="ログイン"/>
-    </form>
-    {{ .message }}<br/>
+<h1>ログイン</h1>
+<form action="/login" method="POST">
+ユーザー名：<input type="text" name="user_name"/><br/>
+パスワード：<input type="password" name="password"/><br/>
+<input type="submit" value="ログイン"/>
+</form>
+{{ .message }}<br/>
 
-    <a href="/signup">アカウント作成はこちら</a><br/>
+<a href="/signup">アカウント作成はこちら</a><br/>
 
 {{template "footer"}}
