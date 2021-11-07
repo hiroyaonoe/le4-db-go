@@ -39,11 +39,8 @@ func Get(c *gin.Context) {
 	}
 
 	threads := []domain.Thread{}
-	query := "SELECT thread_id, title, created_at, categories.category_id, categories.name AS category_name " +
-		"FROM threads " +
-		"NATURAL JOIN post_threads " +
-		"NATURAL JOIN link_categories " +
-		"JOIN categories ON categories.category_id = link_categories.category_id " +
+	query := "SELECT thread_id, title, created_at, category_id, category_name " +
+		"FROM threads_with_user_category " +
 		"WHERE user_id = $1"
 	err = db.Select(&threads, query, userID)
 	if err != nil {
@@ -52,7 +49,7 @@ func Get(c *gin.Context) {
 	}
 
 	AddTags := []domain.Tag{}
-	query = "SELECT tag_id, name, thread_id FROM tags NATURAL JOIN add_tags WHERE thread_id IN (:thread_id)"
+	query = "SELECT tag_id, name, thread_id FROM tag_with_thread_id WHERE thread_id IN (:thread_id)"
 	query, argsT, err := sqlx.Named(query, threads)
 	query, argsT, err = sqlx.In(query, argsT)
 	query = db.Rebind(query)
@@ -63,10 +60,9 @@ func Get(c *gin.Context) {
 	}
 
 	numComments := []domain.Thread{}
-	query = "SELECT thread_id, COUNT(comment_id) AS num_comment " +
-		"FROM comments " +
-		"WHERE thread_id IN (:thread_id) " +
-		"GROUP BY thread_id"
+	query = "SELECT thread_id, num_comment " +
+		"FROM num_comments " +
+		"WHERE thread_id IN (:thread_id)"
 	query, argsT, err = sqlx.Named(query, threads)
 	query, argsT, err = sqlx.In(query, argsT)
 	query = db.Rebind(query)

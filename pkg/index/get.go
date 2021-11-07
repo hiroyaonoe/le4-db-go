@@ -17,13 +17,7 @@ func Get(c *gin.Context) {
 	}
 
 	threads := []domain.Thread{}
-	query := "SELECT thread_id, title, users.user_id, users.name AS user_name, created_at, categories.category_id, categories.name AS category_name " +
-		"FROM threads " +
-		"NATURAL JOIN post_threads " +
-		"NATURAL JOIN users " +
-		"NATURAL JOIN link_categories " +
-		"JOIN categories ON categories.category_id = link_categories.category_id"
-	err = db.Select(&threads, query)
+	err = db.Select(&threads, "SELECT thread_id, title, created_at, user_id, user_name, category_id, category_name FROM threads_with_user_category")
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
@@ -47,17 +41,14 @@ func Get(c *gin.Context) {
 	}
 
 	AddTags := []domain.Tag{}
-	err = db.Select(&AddTags, "SELECT tag_id, name, thread_id FROM tags NATURAL JOIN add_tags")
+	err = db.Select(&AddTags, "SELECT tag_id, name, thread_id FROM tag_with_thread_id")
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	numComments := []domain.Thread{}
-	query = "SELECT thread_id, COUNT(comment_id) AS num_comment " +
-		"FROM comments " +
-		"GROUP BY thread_id"
-	err = db.Select(&numComments, query)
+	err = db.Select(&numComments, "SELECT thread_id, num_comment FROM num_comments")
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
