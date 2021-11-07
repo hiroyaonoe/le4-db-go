@@ -29,6 +29,7 @@ CREATE TABLE tags (
   tag_id SERIAL PRIMARY KEY,
   name   TEXT   NOT NULL UNIQUE
 );
+CREATE INDEX tags_name_index ON tags(name);
 
 CREATE TABLE post_threads (
   thread_id INTEGER PRIMARY KEY,
@@ -37,6 +38,7 @@ CREATE TABLE post_threads (
   FOREIGN KEY (thread_id) REFERENCES threads(thread_id) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
+CREATE INDEX threads_created_at_index ON post_threads(created_at);
 
 CREATE TABLE post_comments (
   comment_id INTEGER, 
@@ -47,6 +49,7 @@ CREATE TABLE post_comments (
   FOREIGN KEY (comment_id, thread_id) REFERENCES comments(comment_id, thread_id) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
+CREATE INDEX comments_created_at_index ON post_comments(created_at);
 
 CREATE TABLE link_categories (
   thread_id INTEGER PRIMARY KEY,
