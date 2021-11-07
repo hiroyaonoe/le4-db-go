@@ -1,7 +1,6 @@
 package search
 
 import (
-	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -90,8 +89,6 @@ func Get(c *gin.Context) {
 	queryBuilder = builder.Where(builder.Word(query), queryBuilder)
 	query = queryBuilder.Build()
 	query = db.Rebind(query)
-	log.Println(query)
-	log.Println(args)
 
 	threads := []domain.Thread{}
 	err = db.Select(&threads, query, args...)
