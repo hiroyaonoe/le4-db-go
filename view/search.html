@@ -14,7 +14,7 @@
     <option value="{{$v.TagID}}" {{ if eq $.tagID $v.TagID }}selected{{ end }}>{{$v.Name}}</option>
     {{end}}
 </select><br/>
-<input type="text" name="query" value="{{ .query }}"/>
+<input type="text" name="query" placeholder="検索ワード" value="{{ .query }}"/>
 <input type="submit" value="検索"/>
 </form>
 
