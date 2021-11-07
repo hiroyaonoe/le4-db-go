@@ -13,7 +13,14 @@
     <input type="submit" value="変更"/>
     </form>
     {{else}}
-    権限: {{.user.Role}}
+    権限: {{.user.Role}}<br/><br/>
+    {{end}}
+    {{if or (eq .userID .user.UserID) (eq .userRole "owner")}}
+    ユーザーを削除する<br/>
+    <form action="/user/{{.user.UserID}}" method="POST">
+    <input type="hidden" name="_method" value="DELETE">
+    <input type="submit" value="削除"/>
+    </form>
     {{end}}
     <br/>
 

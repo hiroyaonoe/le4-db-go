@@ -31,14 +31,16 @@ func main() {
 	e.GET("/login", login.Get)
 	e.POST("/login", login.Post)
 	e.GET("/signup", signup.Get)
-	e.GET("/logout", logout.Get)
 	e.GET("/search", search.Get)
+	eAuth := e.Group("", auth.AuthenticateWithRedirect)
+	eAuth.GET("/logout", logout.Get)
 
 	ur := e.Group("/user")
 	ur.POST("", user.Create)
 	ur.GET("/:user_id", user.Get)
 	urAuth := ur.Group("", auth.AuthenticateWithRedirect)
 	urAuth.PUT("/:user_id/role", user.UpdateRole)
+	urAuth.DELETE("/:user_id", user.Delete)
 
 	th := e.Group("/thread")
 	th.GET("/:thread_id", thread.Get)
