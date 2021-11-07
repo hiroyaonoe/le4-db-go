@@ -24,6 +24,7 @@
         <tr>
             <th>id</th>
             <th>タイトル</th>
+            <th>コメント数</th>
             <th>作成ユーザー</th>
             <th>作成日時</th>
             <th>カテゴリ</th>
@@ -34,6 +35,7 @@
         <tr>
             <td>{{$v.ThreadID}}</td>
             <td><a href="/thread/{{$v.ThreadID}}">{{$v.Title}}</a></td>
+            <td>{{$v.NumComment}}</td>
             <td><a href="/user/{{$v.UserID}}">{{$v.UserName}}</a></td>
             <td>{{$v.CreatedAt}}</a></td>
             <td><a href="/search?category={{ $v.CategoryID }}">{{ $v.CategoryName }}</a></td>

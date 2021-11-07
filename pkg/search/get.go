@@ -93,6 +93,21 @@ func Get(c *gin.Context) {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	numComments := []domain.Thread{}
+	query = "SELECT thread_id, COUNT(comment_id) AS num_comment " +
+		"FROM comments " +
+		"WHERE thread_id IN (:thread_id) " +
+		"GROUP BY thread_id"
+	query, argsT, err = sqlx.Named(query, threads)
+	query, argsT, err = sqlx.In(query, argsT)
+	query = db.Rebind(query)
+	err = db.Select(&numComments, query, argsT...)
+	if err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	indexThread := map[int]*domain.Thread{}
 	for i := 0; i < len(threads); i++ {
 		indexThread[threads[i].ThreadID] = &threads[i]
@@ -100,6 +115,10 @@ func Get(c *gin.Context) {
 	for _, v := range AddTags {
 		t := indexThread[v.ThreadID]
 		t.Tags = append(t.Tags, v)
+	}
+	for _, v := range numComments {
+		t := indexThread[v.ThreadID]
+		t.NumComment = v.NumComment
 	}
 
 	query = "SELECT comments.content, comments.comment_id, comments.thread_id, threads.title AS thread_title, post_comments.created_at, post_comments.user_id, users.name AS user_name " +

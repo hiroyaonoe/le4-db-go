@@ -53,6 +53,16 @@ func Get(c *gin.Context) {
 		return
 	}
 
+	numComments := []domain.Thread{}
+	query = "SELECT thread_id, COUNT(comment_id) AS num_comment " +
+		"FROM comments " +
+		"GROUP BY thread_id"
+	err = db.Select(&numComments, query)
+	if err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	indexThread := map[int]*domain.Thread{}
 	for i := 0; i < len(threads); i++ {
 		indexThread[threads[i].ThreadID] = &threads[i]
@@ -60,6 +70,10 @@ func Get(c *gin.Context) {
 	for _, v := range AddTags {
 		t := indexThread[v.ThreadID]
 		t.Tags = append(t.Tags, v)
+	}
+	for _, v := range numComments {
+		t := indexThread[v.ThreadID]
+		t.NumComment = v.NumComment
 	}
 
 	c.HTML(http.StatusOK, "index.html", gin.H{
