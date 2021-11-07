@@ -127,9 +127,11 @@ func Get(c *gin.Context) {
 		"JOIN threads ON comments.thread_id = threads.thread_id " +
 		"JOIN users ON post_comments.user_id = users.user_id " +
 		"JOIN link_categories ON link_categories.thread_id = threads.thread_id " +
-		"JOIN categories ON categories.category_id = link_categories.category_id " +
-		"JOIN add_tags ON add_tags.thread_id = threads.thread_id"
+		"JOIN categories ON categories.category_id = link_categories.category_id "
 
+	if tagID >= 0 {
+		query += "JOIN add_tags ON add_tags.thread_id = threads.thread_id "
+	}
 	for i := 0; i < len(words); i++ {
 		likeBuilders[i] = builder.Word("comments.content LIKE ?")
 	}
