@@ -52,6 +52,6 @@ func Delete(c *gin.Context) {
 	}
 
 	id := strconv.Itoa(comment.ThreadID)
-	c.Redirect(http.StatusMovedPermanently, "/thread/"+id)
+	c.Redirect(http.StatusSeeOther, "/thread/"+id)
 	return
 }

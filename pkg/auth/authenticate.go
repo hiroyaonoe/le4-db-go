@@ -23,7 +23,7 @@ func Authenticate(c *gin.Context) {
 func AuthenticateWithRedirect(c *gin.Context) {
 	_, ok := c.Get(userIDKey)
 	if !ok {
-		c.Redirect(http.StatusMovedPermanently, "/login")
+		c.Redirect(http.StatusSeeOther, "/login")
 		c.Abort()
 	}
 	c.Next()

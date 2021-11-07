@@ -28,7 +28,7 @@ func UpdateRole(c *gin.Context) {
 		c.String(http.StatusBadRequest, "bad request")
 		return
 	}
-	
+
 	newRole := c.PostForm("new_role")
 	if newRole != domain.MEMBER && newRole != domain.ADMIN && newRole != domain.OWNER {
 		c.String(http.StatusBadRequest, "bad request")
@@ -50,6 +50,6 @@ func UpdateRole(c *gin.Context) {
 		return
 	}
 
-	c.Redirect(http.StatusMovedPermanently, "/user/"+userIDStr)
+	c.Redirect(http.StatusSeeOther, "/user/"+userIDStr)
 	return
 }
