@@ -1,5 +1,4 @@
-<html>
-<body>
+{{template "header" .}}
     <h1>{{.thread.Title}}</h1>
     <h5>作成ユーザー: <a href="/user/{{ .thread.UserID }}">{{ .thread.UserName }}</a></h5>
     <h5>作成日時: {{.thread.CreatedAt}}</h5>
@@ -10,7 +9,7 @@
         {{end}}
     </h5>
     
-    {{ if or (eq .thread.UserID .userID) (eq .userRole "admin") (eq .userRole "owner")}}
+    {{ if or (eq .thread.UserID .login_user_id) (eq .login_user_role "admin") (eq .login_user_role "owner")}}
     <form action="/thread/{{ $.thread.ThreadID }}" method="POST">
     <input type="hidden" name="_method" value="DELETE">
     <input type="submit" value="スレッドを削除"/>
@@ -18,7 +17,7 @@
     {{ end }}
     {{range $i, $v := .comments}}
     <h4>{{ $i }} : {{ $v.UserName }} [ {{ $v.CreatedAt }} ]</h4>
-    {{ if or (eq $v.UserID $.userID) (eq $.userRole "admin") (eq $.userRole "owner")}}
+    {{ if or (eq $v.UserID $.login_user_id) (eq $.login_user_role "admin") (eq $.login_user_role "owner")}}
     <form action="/thread/{{ $.thread.ThreadID }}/comment/{{ $v.CommentID }}" method="POST">
     {{ $v.Content }}
     <input type="hidden" name="_method" value="DELETE">

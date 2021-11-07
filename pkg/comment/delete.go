@@ -38,7 +38,7 @@ func Delete(c *gin.Context) {
 		return
 	}
 
-	userID := auth.GetUserIDInt(c)
+	userID := auth.GetUserID(c)
 	userRole := auth.GetUserRole(c)
 	if userID != comment.UserID && userRole != domain.ADMIN && userRole != domain.OWNER {
 		c.String(http.StatusUnauthorized, "unauthorized")

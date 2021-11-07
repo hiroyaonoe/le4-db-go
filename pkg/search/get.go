@@ -10,6 +10,7 @@ import (
 	"github.com/hiroyaonoe/le4-db-go/db"
 	"github.com/hiroyaonoe/le4-db-go/domain"
 	"github.com/hiroyaonoe/le4-db-go/lib/builder"
+	"github.com/hiroyaonoe/le4-db-go/pkg/auth"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -152,13 +153,18 @@ func Get(c *gin.Context) {
 		return
 	}
 
+	loginUserID := auth.GetUserID(c)
+	loginUserName := auth.GetUserName(c)
+
 	c.HTML(http.StatusOK, "search.html", gin.H{
-		"threads":    threads,
-		"comments":   comments,
-		"categoryID": categoryID,
-		"categories": categories,
-		"query":      searchQuery,
-		"tagID":      tagID,
-		"tags":       tags,
+		"threads":           threads,
+		"comments":          comments,
+		"categoryID":        categoryID,
+		"categories":        categories,
+		"query":             searchQuery,
+		"tagID":             tagID,
+		"tags":              tags,
+		"login_user_id":     loginUserID,
+		"login_user_name":   loginUserName,
 	})
 }

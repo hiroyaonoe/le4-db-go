@@ -51,13 +51,12 @@ func authenticate(c *gin.Context) error {
 	return nil
 }
 
-func GetUserIDInt(c *gin.Context) int {
-	userID := c.GetInt(userIDKey)
-	return userID
-}
-
-func GetUserIDStrWithOk(c *gin.Context) (interface{}, bool) {
-	return c.Get(userIDKey)
+func GetUserID(c *gin.Context) int {
+	_, exists := c.Get(userIDKey)
+	if exists {
+		return c.GetInt(userIDKey)
+	}
+	return -1 // 未ログインなら-1
 }
 
 func GetUserName(c *gin.Context) interface{} {

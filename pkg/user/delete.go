@@ -29,7 +29,7 @@ func Delete(c *gin.Context) {
 
 	user := domain.User{}
 	err = db.Get(&user, "SELECT * FROM users WHERE user_id = $1", userID)
-		if err != nil {
+	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			c.String(http.StatusNotFound, fmt.Sprintf("user %d not found", userID))
 			return
@@ -38,7 +38,7 @@ func Delete(c *gin.Context) {
 		return
 	}
 
-	loginUserID := auth.GetUserIDInt(c)
+	loginUserID := auth.GetUserID(c)
 	loginUserRole := auth.GetUserRole(c)
 
 	if loginUserID != userID && loginUserRole != domain.OWNER {

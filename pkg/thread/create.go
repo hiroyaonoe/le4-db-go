@@ -22,7 +22,7 @@ func Create(c *gin.Context) {
 
 	thread := domain.Thread{}
 	thread.Title = c.PostForm("thread_title")
-	thread.UserID = auth.GetUserIDInt(c)
+	thread.UserID = auth.GetUserID(c)
 	thread.CategoryID, err = strconv.Atoi(c.PostForm("category_id"))
 	if err != nil {
 		c.String(http.StatusBadRequest, err.Error())

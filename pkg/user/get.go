@@ -29,7 +29,7 @@ func Get(c *gin.Context) {
 
 	user := domain.User{}
 	err = db.Get(&user, "SELECT * FROM users WHERE user_id = $1", userID)
-		if err != nil {
+	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			c.String(http.StatusNotFound, fmt.Sprintf("user %d not found", userID))
 			return
@@ -95,15 +95,17 @@ func Get(c *gin.Context) {
 		return
 	}
 
-	loginUserID := auth.GetUserIDInt(c)
+	loginUserID := auth.GetUserID(c)
+	loginUserName := auth.GetUserName(c)
 	loginUserRole := auth.GetUserRole(c)
 	c.HTML(http.StatusOK, "user.html", gin.H{
-		"user":     user,
-		"threads":  threads,
-		"comments": comments,
-		"userID":   loginUserID,
-		"userRole": loginUserRole,
-		"is_user_page": true,
+		"user":              user,
+		"threads":           threads,
+		"comments":          comments,
+		"login_user_id":     loginUserID,
+		"login_user_name":   loginUserName,
+		"login_user_role":   loginUserRole,
+		"is_user_page":      true,
 	})
 	return
 }

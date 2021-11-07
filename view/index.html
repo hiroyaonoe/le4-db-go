@@ -1,11 +1,4 @@
-<html>
-<body>
-    {{ if .user_exists }}
-    <h3>ユーザー名: <a href="/user/{{ .user_id }}">{{ .user_name }}</a></h3>
-    <a href="/logout">ログアウト</a>
-    {{ else }}
-    <h3><a href="/login">ログイン・アカウント作成</a></h3>
-    {{ end }}
+{{template "header" .}}
     <h1>スレッドを作成</h1>
     <form action="/thread" method="POST">
     スレッド名：<input type="text" name="thread_title"/><br/>
@@ -37,5 +30,5 @@
     <input type="text" name="query" placeholder="検索ワード"/>
     <input type="submit" value="検索"/>
     </form>
-
-{{template "footer"}}
+</body>
+</html>

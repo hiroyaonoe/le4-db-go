@@ -23,9 +23,6 @@ func Get(c *gin.Context) {
 		return
 	}
 
-	userID, ok := auth.GetUserIDStrWithOk(c)
-	userName := auth.GetUserName(c)
-
 	categories := []domain.Category{}
 	err = db.Select(&categories, "SELECT category_id, name FROM categories")
 	if err != nil {
@@ -67,11 +64,13 @@ func Get(c *gin.Context) {
 		t.NumComment = v.NumComment
 	}
 
+	loginUserID := auth.GetUserID(c)
+	loginUserName := auth.GetUserName(c)
+
 	c.HTML(http.StatusOK, "index.html", gin.H{
 		"threads":     threads,
-		"user_id":     userID,
-		"user_name":   userName,
-		"user_exists": ok,
+		"login_user_id":     loginUserID,
+		"login_user_name":   loginUserName,
 		"categories":  categories,
 		"tags":        tags,
 	})

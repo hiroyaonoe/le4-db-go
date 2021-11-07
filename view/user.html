@@ -1,7 +1,6 @@
-<html>
-<body>
+{{template "header" .}}
     <h1>{{.user.Name}}</h1>
-    {{if eq .userRole "owner"}}
+    {{if eq .login_user_role "owner"}}
     <form action="/user/{{.user.UserID}}/role" method="POST">
     権限: {{.user.Role}}
     <select name="new_role">
@@ -15,7 +14,7 @@
     {{else}}
     権限: {{.user.Role}}<br/><br/>
     {{end}}
-    {{if or (eq .userID .user.UserID) (eq .userRole "owner")}}
+    {{if or (eq .login_user_id .user.UserID) (eq .login_user_role "owner")}}
     ユーザーを削除する<br/>
     <form action="/user/{{.user.UserID}}" method="POST">
     <input type="hidden" name="_method" value="DELETE">

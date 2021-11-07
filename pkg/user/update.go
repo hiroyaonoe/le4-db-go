@@ -35,7 +35,7 @@ func UpdateRole(c *gin.Context) {
 		return
 	}
 
-	if userID == auth.GetUserIDInt(c) { // ownerは一人以上必要
+	if userID == auth.GetUserID(c) { // ownerは一人以上必要
 		var cnt int
 		err = db.Get(&cnt, "SELECT count(*) FROM users WHERE role = 'owner'")
 		if cnt <= 1 {

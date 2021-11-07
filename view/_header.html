@@ -1,0 +1,10 @@
+{{define "header"}}
+<html>
+<body>
+{{ if ne .login_user_id -1 }}
+<h3>ユーザー名: <a href="/user/{{ .login_user_id }}">{{ .login_user_name }}</a></h3>
+<a href="/logout">ログアウト</a>
+{{ else }}
+<h3><a href="/login">ログイン・アカウント作成</a></h3>
+{{ end }}
+{{end}}
