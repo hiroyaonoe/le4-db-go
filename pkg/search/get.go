@@ -40,8 +40,8 @@ func Get(c *gin.Context) {
 		"NATURAL JOIN post_threads " +
 		"NATURAL JOIN users " +
 		"NATURAL JOIN link_categories " +
-		"JOIN categories ON categories.category_id = link_categories.category_id " +
-		"JOIN add_tags ON add_tags.thread_id = threads.thread_id"
+		"JOIN categories ON categories.category_id = link_categories.category_id "
+		
 
 	args := make([]interface{}, len(words), len(words)+2)
 	for i, v := range words {
@@ -57,6 +57,7 @@ func Get(c *gin.Context) {
 
 	var tagBuilder builder.Builder
 	if tagID >= 0 {
+		query += "JOIN add_tags ON add_tags.thread_id = threads.thread_id "
 		args = append(args, tagID)
 		tagBuilder = builder.Word("add_tags.tag_id = ?")
 	} else { // searchTag == -1(all) の場合
