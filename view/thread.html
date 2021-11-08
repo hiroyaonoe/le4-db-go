@@ -13,16 +13,24 @@
 {{ if or (eq .thread.UserID .login_user_id) (eq .login_user_role "admin") (eq .login_user_role "owner")}}
 <form action="/thread/{{ $.thread.ThreadID }}" method="POST">
 <input type="hidden" name="_method" value="DELETE">
-<input type="submit" value="スレッドを削除"/>
+    {{ if eq .thread.UserID .login_user_id}}
+    <input type="submit" value="スレッドを削除"/>
+    {{else}}
+    <input type="submit" value="admin権限でスレッドを削除"/>
+    {{end}}
 </form>
 {{ end }}
 {{range $i, $v := .comments}}
-<h4>{{ $i }} : {{ $v.UserName }} [ {{ $v.CreatedAt }} ]</h4>
+<h4>{{ $i }} : <a href="/user/{{ $v.UserID }}">{{ $v.UserName }}</a> [ {{ $v.CreatedAt }} ]</h4>
 {{ if or (eq $v.UserID $.login_user_id) (eq $.login_user_role "admin") (eq $.login_user_role "owner")}}
 <form action="/thread/{{ $.thread.ThreadID }}/comment/{{ $v.CommentID }}" method="POST">
 {{ $v.Content }}
 <input type="hidden" name="_method" value="DELETE">
-<input type="submit" value="削除"/>
+    {{ if eq $v.UserID $.login_user_id}}
+    <input type="submit" value="削除"/>
+    {{else}}
+    <input type="submit" value="admin権限で削除"/>
+    {{end}}
 </form>
 {{ else }}
 {{ $v.Content }}
