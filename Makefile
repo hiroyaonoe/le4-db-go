@@ -8,3 +8,8 @@ run:
 .PHONY:fmt
 fmt:
 	go fmt ./...
+
+.PHONY:init-db
+init-db:
+	cat sql/create.sql sql/view.sql sql/insert.sql | PGPASSWORD=postgres psql -h localhost -U postgres
+

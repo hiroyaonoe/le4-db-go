@@ -1,3 +1,6 @@
+DROP SCHEMA public CASCADE;
+CREATE SCHEMA public;
+
 CREATE TYPE role AS ENUM ('member', 'admin', 'owner');
 
 CREATE TABLE users (
