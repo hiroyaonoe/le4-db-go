@@ -14,5 +14,8 @@ func NewDB() (*sqlx.DB, error) {
 		return nil, fmt.Errorf("failed to open PostgreSQL: %w", err)
 	}
 
+	db.SetMaxIdleConns(100)
+	db.SetMaxOpenConns(100)
+
 	return db, nil
 }
