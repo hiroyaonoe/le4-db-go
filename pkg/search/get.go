@@ -40,8 +40,8 @@ func Get(c *gin.Context) {
 		"NATURAL JOIN post_threads " +
 		"NATURAL JOIN users " +
 		"NATURAL JOIN link_categories " +
-		"JOIN categories ON categories.category_id = link_categories.category_id " +
-		"JOIN add_tags ON add_tags.thread_id = threads.thread_id"
+		"JOIN categories ON categories.category_id = link_categories.category_id "
+		
 
 	args := make([]interface{}, len(words), len(words)+2)
 	for i, v := range words {
@@ -57,6 +57,7 @@ func Get(c *gin.Context) {
 
 	var tagBuilder builder.Builder
 	if tagID >= 0 {
+		query += "JOIN add_tags ON add_tags.thread_id = threads.thread_id "
 		args = append(args, tagID)
 		tagBuilder = builder.Word("add_tags.tag_id = ?")
 	} else { // searchTag == -1(all) の場合
@@ -92,6 +93,21 @@ func Get(c *gin.Context) {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	numComments := []domain.Thread{}
+	query = "SELECT thread_id, COUNT(comment_id) AS num_comment " +
+		"FROM comments " +
+		"WHERE thread_id IN (:thread_id) " +
+		"GROUP BY thread_id"
+	query, argsT, err = sqlx.Named(query, threads)
+	query, argsT, err = sqlx.In(query, argsT)
+	query = db.Rebind(query)
+	err = db.Select(&numComments, query, argsT...)
+	if err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	indexThread := map[int]*domain.Thread{}
 	for i := 0; i < len(threads); i++ {
 		indexThread[threads[i].ThreadID] = &threads[i]
@@ -99,6 +115,10 @@ func Get(c *gin.Context) {
 	for _, v := range AddTags {
 		t := indexThread[v.ThreadID]
 		t.Tags = append(t.Tags, v)
+	}
+	for _, v := range numComments {
+		t := indexThread[v.ThreadID]
+		t.NumComment = v.NumComment
 	}
 
 	query = "SELECT comments.content, comments.comment_id, comments.thread_id, threads.title AS thread_title, post_comments.created_at, post_comments.user_id, users.name AS user_name " +
