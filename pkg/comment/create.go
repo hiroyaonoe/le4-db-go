@@ -25,7 +25,7 @@ func Create(c *gin.Context) {
 		c.String(http.StatusBadRequest, err.Error())
 		return
 	}
-	comment.UserID = auth.GetUserIDInt(c)
+	comment.UserID = auth.GetUserID(c)
 	comment.CreatedAt = domain.NewDateTime(time.Now())
 
 	tx, err := db.Beginx()

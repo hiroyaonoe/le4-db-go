@@ -1,74 +1,33 @@
-<html>
-<body>
-    <h1>{{.user.Name}}</h1>
-    {{if eq .userRole "owner"}}
-    <form action="/user/{{.user.UserID}}/role" method="POST">
-    権限: {{.user.Role}}
-    <select name="new_role">
-        <option value="member" {{ if eq .user.Role "member" }}selected{{ end }} >member</option>
-        <option value="admin" {{ if eq .user.Role "admin" }}selected{{ end }} >admin</option>
-        <option value="owner" {{ if eq .user.Role "owner" }}selected{{ end }} >owner</option>
-    </select>
-    <input type="hidden" name="_method" value="PUT">
-    <input type="submit" value="変更"/>
-    </form>
-    {{else}}
-    権限: {{.user.Role}}<br/><br/>
-    {{end}}
-    {{if or (eq .userID .user.UserID) (eq .userRole "owner")}}
-    ユーザーを削除する<br/>
-    <form action="/user/{{.user.UserID}}" method="POST">
-    <input type="hidden" name="_method" value="DELETE">
-    <input type="submit" value="削除"/>
-    </form>
-    {{end}}
-    <br/>
+{{template "header" .}}
 
-    <h3>作成したスレッド一覧</h3>
-    <table border="1">
-        <tr>
-            <th>id</th>
-            <th>タイトル</th>
-            <th>コメント数</th>
-            <th>作成日時</th>
-            <th>カテゴリ</th>
-            <th>タグ</th>
-        </tr>
+<h1>{{.user.Name}}</h1>
+{{if eq .login_user_role "owner"}}
+<form action="/user/{{.user.UserID}}/role" method="POST">
+権限: {{.user.Role}}
+<select name="new_role">
+    <option value="member" {{ if eq .user.Role "member" }}selected{{ end }} >member</option>
+    <option value="admin" {{ if eq .user.Role "admin" }}selected{{ end }} >admin</option>
+    <option value="owner" {{ if eq .user.Role "owner" }}selected{{ end }} >owner</option>
+</select>
+<input type="hidden" name="_method" value="PUT">
+<input type="submit" value="変更"/>
+</form>
+{{else}}
+権限: {{.user.Role}}<br/><br/>
+{{end}}
+{{if or (eq .login_user_id .user.UserID) (eq .login_user_role "owner")}}
+ユーザーを削除する<br/>
+<form action="/user/{{.user.UserID}}" method="POST">
+<input type="hidden" name="_method" value="DELETE">
+<input type="submit" value="削除"/>
+</form>
+{{end}}
+<br/>
 
-        {{range $i, $v := .threads}}
-        <tr>
-            <td>{{$v.ThreadID}}</td>
-            <td><a href="/thread/{{$v.ThreadID}}">{{$v.Title}}</a></td>
-            <td>{{$v.NumComment}}</td>
-            <td>{{$v.CreatedAt}}</a></td>
-            <td><a href="/search?category={{ $v.CategoryID }}">{{ $v.CategoryName }}</a></td>
-            <td>
-                {{range $ii, $vv := $v.Tags}}
-                <a href="/search?tag={{ $vv.TagID }}">{{ $vv.Name }}</a> 
-                {{end}}
-            </td>
-        </tr>
-        {{end}}
-    </table>
-    
-    <h3>コメントを投稿したスレッド一覧</h3>
-    <table border="1">
-        <tr>
-            <th>id</th>
-            <th>タイトル</th>
-            <th>作成ユーザー</th>
-            <th>作成日時</th>
-        </tr>
+<h3>作成したスレッド一覧</h3>
+{{template "threads" .}}
 
-        {{range $i, $v := .threadsC}}
-        <tr>
-            <td>{{$v.ThreadID}}</td>
-            <td><a href="/thread/{{$v.ThreadID}}">{{$v.Title}}</a></td>
-            <td><a href="/user/{{$v.UserID}}">{{$v.UserName}}</a></td>
-            <td>{{$v.CreatedAt}}</a></td>
-        </tr>
-        {{end}}
-    </table>
-    <a href="/">ホームへ戻る</a>
-</body>
-</html>
+<h3>コメント</h3>
+{{template "comments" .}}
+
+{{template "footer"}}

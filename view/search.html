@@ -1,74 +1,28 @@
-<html>
-<body>
-    <h2>スレッド・コメントを検索</h2>
-    <form action="/search" method="GET">
-    <select name="category">
-        <option value="-1" {{ if eq .categoryID -1 }}selected{{ end }}>カテゴリ指定なし</option>
-        {{range $i, $v := .categories}}
-        <option value="{{$v.CategoryID}}" {{ if eq $.categoryID $v.CategoryID }}selected{{ end }}>{{$v.Name}}</option>
-        {{end}}
-    </select>
-    <select name="tag">
-        <option value="-1" {{ if eq .tagID -1 }}selected{{ end }}>タグ指定なし</option>
-        {{range $i, $v := .tags}}
-        <option value="{{$v.TagID}}" {{ if eq $.tagID $v.TagID }}selected{{ end }}>{{$v.Name}}</option>
-        {{end}}
-    </select><br/>
-    <input type="text" name="query" value="{{ .query }}"/>
-    <input type="submit" value="検索"/>
-    </form>
+{{template "header" .}}
 
-    <h2>検索結果</h2>
-    <h3>スレッド</h3>
-    <table border="1">
-        <tr>
-            <th>id</th>
-            <th>タイトル</th>
-            <th>コメント数</th>
-            <th>作成ユーザー</th>
-            <th>作成日時</th>
-            <th>カテゴリ</th>
-            <th>タグ</th>
-        </tr>
+<h2>スレッド・コメントを検索</h2>
+<form action="/search" method="GET">
+<select name="category">
+    <option value="-1" {{ if eq .categoryID -1 }}selected{{ end }}>カテゴリ指定なし</option>
+    {{range $i, $v := .categories}}
+    <option value="{{$v.CategoryID}}" {{ if eq $.categoryID $v.CategoryID }}selected{{ end }}>{{$v.Name}}</option>
+    {{end}}
+</select>
+<select name="tag">
+    <option value="-1" {{ if eq .tagID -1 }}selected{{ end }}>タグ指定なし</option>
+    {{range $i, $v := .tags}}
+    <option value="{{$v.TagID}}" {{ if eq $.tagID $v.TagID }}selected{{ end }}>{{$v.Name}}</option>
+    {{end}}
+</select><br/>
+<input type="text" name="query" placeholder="検索ワード" value="{{ .query }}"/>
+<input type="submit" value="検索"/>
+</form>
 
-        {{range $i, $v := .threads}}
-        <tr>
-            <td>{{$v.ThreadID}}</td>
-            <td><a href="/thread/{{$v.ThreadID}}">{{$v.Title}}</a></td>
-            <td>{{$v.NumComment}}</td>
-            <td><a href="/user/{{$v.UserID}}">{{$v.UserName}}</a></td>
-            <td>{{$v.CreatedAt}}</a></td>
-            <td><a href="/search?category={{ $v.CategoryID }}">{{ $v.CategoryName }}</a></td>
-            <td>
-                {{range $ii, $vv := $v.Tags}}
-                <a href="/search?tag={{ $vv.TagID }}">{{ $vv.Name }}</a> 
-                {{end}}
-            </td>
-        </tr>
-        {{end}}
-    </table>
-    
-    <h3>コメント</h3>
-    <table border="1">
-        <tr>
-            <th>コメント</th>
-            <th>投稿ユーザー</th>
-            <th>投稿日時</th>
-            <th>スレッドID</th>
-            <th>スレッドタイトル</th>
-        </tr>
+<h2>検索結果</h2>
+<h3>スレッド</h3>
+{{template "threads" .}}
 
-        {{range $i, $v := .comments}}
-        <tr>
-            <td>{{$v.Content}}</td>
-            <td><a href="/user/{{$v.UserID}}">{{$v.UserName}}</a></td>
-            <td>{{$v.CreatedAt}}</a></td>
-            <td>{{$v.ThreadID}}</td>
-            <td><a href="/thread/{{$v.ThreadID}}">{{$v.ThreadTitle}}</a></td>
-        </tr>
-        {{end}}
-    </table>
-    <br/>
-    <a href="/">ホームへ戻る</a>
-</body>
-</html>
+<h3>コメント</h3>
+{{template "comments" .}}
+
+{{template "footer"}}

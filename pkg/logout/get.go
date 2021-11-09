@@ -3,8 +3,8 @@ package logout
 import (
 	"net/http"
 
-	"github.com/hiroyaonoe/le4-db-go/lib/session"
 	"github.com/gin-gonic/gin"
+	"github.com/hiroyaonoe/le4-db-go/lib/session"
 )
 
 func Get(c *gin.Context) {

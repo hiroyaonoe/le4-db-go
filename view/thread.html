@@ -1,40 +1,38 @@
-<html>
-<body>
-    <h1>{{.thread.Title}}</h1>
-    <h5>作成ユーザー: <a href="/user/{{ .thread.UserID }}">{{ .thread.UserName }}</a></h5>
-    <h5>作成日時: {{.thread.CreatedAt}}</h5>
-    <h5>カテゴリ: <a href="/search?category={{ .thread.CategoryID }}">{{ .thread.CategoryName }}</a></h5>
-    <h5>タグ: 
-        {{range $i, $v := .tags}}
-        <a href="/search?tag={{ $v.TagID }}">{{ $v.Name }}</a> 
-        {{end}}
-    </h5>
-    
-    {{ if or (eq .thread.UserID .userID) (eq .userRole "admin") (eq .userRole "owner")}}
-    <form action="/thread/{{ $.thread.ThreadID }}" method="POST">
-    <input type="hidden" name="_method" value="DELETE">
-    <input type="submit" value="スレッドを削除"/>
-    </form>
-    {{ end }}
-    {{range $i, $v := .comments}}
-    <h4>{{ $i }} : {{ $v.UserName }} [ {{ $v.CreatedAt }} ]</h4>
-    {{ if or (eq $v.UserID $.userID) (eq $.userRole "admin") (eq $.userRole "owner")}}
-    <form action="/thread/{{ $.thread.ThreadID }}/comment/{{ $v.CommentID }}" method="POST">
-    {{ $v.Content }}
-    <input type="hidden" name="_method" value="DELETE">
-    <input type="submit" value="削除"/>
-    </form>
-    {{ else }}
-    {{ $v.Content }}
-    {{ end }}
-    {{ end }}
+{{template "header" .}}
 
-    <h3>コメントを投稿</h3>
-    <form action="/thread/{{ .thread.ThreadID }}/comment" method="POST">
-    <textarea name="comment_content" cols="50" rows="10"></textarea><br/>
-    <input type="submit" value="送信"/>
-    </form>
+<h1>{{.thread.Title}}</h1>
+<h5>作成ユーザー: <a href="/user/{{ .thread.UserID }}">{{ .thread.UserName }}</a></h5>
+<h5>作成日時: {{.thread.CreatedAt}}</h5>
+<h5>カテゴリ: <a href="/search?category={{ .thread.CategoryID }}">{{ .thread.CategoryName }}</a></h5>
+<h5>タグ: 
+    {{range $i, $v := .tags}}
+    <a href="/search?tag={{ $v.TagID }}">{{ $v.Name }}</a> 
+    {{end}}
+</h5>
 
-    <a href="/">ホームへ戻る</a>
-</body>
-</html>
+{{ if or (eq .thread.UserID .login_user_id) (eq .login_user_role "admin") (eq .login_user_role "owner")}}
+<form action="/thread/{{ $.thread.ThreadID }}" method="POST">
+<input type="hidden" name="_method" value="DELETE">
+<input type="submit" value="スレッドを削除"/>
+</form>
+{{ end }}
+{{range $i, $v := .comments}}
+<h4>{{ $i }} : {{ $v.UserName }} [ {{ $v.CreatedAt }} ]</h4>
+{{ if or (eq $v.UserID $.login_user_id) (eq $.login_user_role "admin") (eq $.login_user_role "owner")}}
+<form action="/thread/{{ $.thread.ThreadID }}/comment/{{ $v.CommentID }}" method="POST">
+{{ $v.Content }}
+<input type="hidden" name="_method" value="DELETE">
+<input type="submit" value="削除"/>
+</form>
+{{ else }}
+{{ $v.Content }}
+{{ end }}
+{{ end }}
+
+<h3>コメントを投稿</h3>
+<form action="/thread/{{ .thread.ThreadID }}/comment" method="POST">
+<textarea name="comment_content" cols="50" rows="10"></textarea><br/>
+<input type="submit" value="送信"/>
+</form>
+
+{{template "footer"}}

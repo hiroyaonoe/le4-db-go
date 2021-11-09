@@ -29,7 +29,7 @@ func Get(c *gin.Context) {
 
 	user := domain.User{}
 	err = db.Get(&user, "SELECT * FROM users WHERE user_id = $1", userID)
-		if err != nil {
+	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			c.String(http.StatusNotFound, fmt.Sprintf("user %d not found", userID))
 			return
@@ -39,11 +39,8 @@ func Get(c *gin.Context) {
 	}
 
 	threads := []domain.Thread{}
-	query := "SELECT thread_id, title, created_at, categories.category_id, categories.name AS category_name " +
-		"FROM threads " +
-		"NATURAL JOIN post_threads " +
-		"NATURAL JOIN link_categories " +
-		"JOIN categories ON categories.category_id = link_categories.category_id " +
+	query := "SELECT thread_id, title, created_at, category_id, category_name " +
+		"FROM threads_with_user_category " +
 		"WHERE user_id = $1"
 	err = db.Select(&threads, query, userID)
 	if err != nil {
@@ -52,7 +49,7 @@ func Get(c *gin.Context) {
 	}
 
 	AddTags := []domain.Tag{}
-	query = "SELECT tag_id, name, thread_id FROM tags NATURAL JOIN add_tags WHERE thread_id IN (:thread_id)"
+	query = "SELECT tag_id, name, thread_id FROM tag_with_thread_id WHERE thread_id IN (:thread_id)"
 	query, argsT, err := sqlx.Named(query, threads)
 	query, argsT, err = sqlx.In(query, argsT)
 	query = db.Rebind(query)
@@ -63,10 +60,9 @@ func Get(c *gin.Context) {
 	}
 
 	numComments := []domain.Thread{}
-	query = "SELECT thread_id, COUNT(comment_id) AS num_comment " +
-		"FROM comments " +
-		"WHERE thread_id IN (:thread_id) " +
-		"GROUP BY thread_id"
+	query = "SELECT thread_id, num_comment " +
+		"FROM num_comments " +
+		"WHERE thread_id IN (:thread_id)"
 	query, argsT, err = sqlx.Named(query, threads)
 	query, argsT, err = sqlx.In(query, argsT)
 	query = db.Rebind(query)
@@ -89,28 +85,27 @@ func Get(c *gin.Context) {
 		t.NumComment = v.NumComment
 	}
 
-	threadsC := []domain.Thread{}
-	query = "SELECT DISTINCT threads.thread_id, threads.title, post_threads.created_at, users.user_id, users.name AS user_name " +
-		"FROM post_comments " +
-		"JOIN comments ON post_comments.thread_id = comments.thread_id AND post_comments.comment_id = comments.comment_id " +
-		"JOIN threads ON comments.thread_id = threads.thread_id " +
-		"JOIN post_threads ON threads.thread_id = post_threads.thread_id " +
-		"JOIN users ON post_threads.user_id = users.user_id " +
-		"WHERE post_comments.user_id = $1"
-	err = db.Select(&threadsC, query, userID)
+	comments := []domain.Comment{}
+	query = "SELECT content, comment_id, thread_id, thread_title, created_at " +
+		"FROM comments_with_user_thread " +
+		"WHERE user_id = $1"
+	err = db.Select(&comments, query, userID)
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	loginUserID := auth.GetUserIDInt(c)
+	loginUserID := auth.GetUserID(c)
+	loginUserName := auth.GetUserName(c)
 	loginUserRole := auth.GetUserRole(c)
 	c.HTML(http.StatusOK, "user.html", gin.H{
-		"user":     user,
-		"threads":  threads,
-		"threadsC": threadsC,
-		"userID":   loginUserID,
-		"userRole": loginUserRole,
+		"user":            user,
+		"threads":         threads,
+		"comments":        comments,
+		"login_user_id":   loginUserID,
+		"login_user_name": loginUserName,
+		"login_user_role": loginUserRole,
+		"is_user_page":    true,
 	})
 	return
 }

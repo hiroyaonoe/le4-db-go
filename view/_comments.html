@@ -1,0 +1,21 @@
+{{define "comments"}}
+<table border="1">
+    <tr>
+        <th>コメント</th>
+        {{with .is_user_page}}{{else}}<th>投稿ユーザー</th>{{end}}
+        <th>投稿日時</th>
+        <th>スレッドID</th>
+        <th>スレッドタイトル</th>
+    </tr>
+
+    {{range $i, $v := .comments}}
+    <tr>
+        <td>{{$v.Content}}</td>
+        {{with $.is_user_page}}{{else}}<td><a href="/user/{{$v.UserID}}">{{$v.UserName}}</a></td>{{end}}
+        <td>{{$v.CreatedAt}}</a></td>
+        <td>{{$v.ThreadID}}</td>
+        <td><a href="/thread/{{$v.ThreadID}}">{{$v.ThreadTitle}}</a></td>
+    </tr>
+    {{end}}
+</table>
+{{end}}

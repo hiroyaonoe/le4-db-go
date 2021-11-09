@@ -1,18 +1,18 @@
 CREATE TYPE role AS ENUM ('member', 'admin', 'owner');
 
-CREATE TABLE "users" (
+CREATE TABLE users (
   user_id  SERIAL PRIMARY KEY,
   role     role   NOT NULL,
   name     TEXT   NOT NULL UNIQUE,
   password TEXT   NOT NULL
 );
 
-CREATE TABLE "threads" (
+CREATE TABLE threads (
   thread_id SERIAL PRIMARY KEY,
   title     TEXT   NOT NULL
 );
 
-CREATE TABLE "comments" (
+CREATE TABLE comments (
   comment_id SERIAL,
   thread_id  INTEGER,
   content    TEXT NOT NULL,
@@ -20,17 +20,17 @@ CREATE TABLE "comments" (
   FOREIGN KEY (thread_id) REFERENCES threads(thread_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE "categories" (
+CREATE TABLE categories (
   category_id SERIAL PRIMARY KEY,
   name        TEXT   NOT NULL UNIQUE
 );
 
-CREATE TABLE "tags" (
+CREATE TABLE tags (
   tag_id SERIAL PRIMARY KEY,
   name   TEXT   NOT NULL UNIQUE
 );
 
-CREATE TABLE "post_threads" (
+CREATE TABLE post_threads (
   thread_id INTEGER PRIMARY KEY,
   user_id INTEGER NOT NULL,
   created_at TIMESTAMP,
@@ -38,7 +38,7 @@ CREATE TABLE "post_threads" (
   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE "post_comments" (
+CREATE TABLE post_comments (
   comment_id INTEGER, 
   thread_id INTEGER,
   user_id INTEGER NOT NULL,
@@ -48,14 +48,14 @@ CREATE TABLE "post_comments" (
   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE "link_categories" (
+CREATE TABLE link_categories (
   thread_id INTEGER PRIMARY KEY,
   category_id INTEGER NOT NULL,
   FOREIGN KEY (thread_id) REFERENCES threads(thread_id) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE "add_tags" (
+CREATE TABLE add_tags (
   thread_id INTEGER,
   tag_id INTEGER,
   PRIMARY KEY (thread_id, tag_id),
