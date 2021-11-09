@@ -20,6 +20,10 @@ func Create(c *gin.Context) {
 
 	comment := domain.Comment{}
 	comment.Content = c.PostForm("comment_content")
+	if comment.Content == "" {
+		c.String(http.StatusBadRequest, "comment's content cannot be null")
+		return
+	}
 	comment.ThreadID, err = strconv.Atoi(c.Param("thread_id"))
 	if err != nil {
 		c.String(http.StatusBadRequest, err.Error())

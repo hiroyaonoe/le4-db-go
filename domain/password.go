@@ -54,7 +54,7 @@ func (t *Password) Encrypt() error {
 		return fmt.Errorf("Already encrypted:%s", t)
 	}
 	if t.String() == "" {
-		return nil
+		return fmt.Errorf("Password cannot be null")
 	}
 	token := []byte(t.String())
 	digest, err := bcrypt.GenerateFromPassword(token, bcrypt.DefaultCost)

@@ -22,6 +22,10 @@ func Create(c *gin.Context) {
 
 	thread := domain.Thread{}
 	thread.Title = c.PostForm("thread_title")
+	if thread.Title == "" {
+		c.String(http.StatusBadRequest, "thread's title cannot be null")
+		return
+	}
 	thread.UserID = auth.GetUserID(c)
 	thread.CategoryID, err = strconv.Atoi(c.PostForm("category_id"))
 	if err != nil {
