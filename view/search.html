@@ -14,6 +14,9 @@
     <option value="{{$v.TagID}}" {{ if eq $.tagID $v.TagID }}selected{{ end }}>{{$v.Name}}</option>
     {{end}}
 </select><br/>
+<input type="date" name="start_date" value="{{.start_date}}"/>から
+<input type="date" name="end_date" value="{{.end_date}}"/>まで
+<br/>
 <input type="text" name="query" placeholder="検索ワード" value="{{ .query }}"/>
 <input type="submit" value="検索"/>
 </form>
