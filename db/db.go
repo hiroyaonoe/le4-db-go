@@ -11,7 +11,11 @@ import (
 	"github.com/simukti/sqldb-logger/logadapter/zerologadapter"
 )
 
-func NewDB() (*sqlx.DB, error) {
+var (
+	db *sqlx.DB
+)
+
+func InitDB() {
 	logger := zerolog.New(
 		zerolog.ConsoleWriter{Out: os.Stdout, NoColor: false},
 	)
@@ -20,9 +24,12 @@ func NewDB() (*sqlx.DB, error) {
 		pq.Driver{},
 		zerologadapter.New(logger),
 	)
-	db := sqlx.NewDb(dbrow, "postgres")
+	db = sqlx.NewDb(dbrow, "postgres")
+
 	db.SetMaxIdleConns(100)
 	db.SetMaxOpenConns(100)
+}
 
-	return db, nil
+func GetDB() *sqlx.DB {
+	return db
 }

@@ -14,11 +14,7 @@ import (
 )
 
 func Get(c *gin.Context) {
-	db, err := db.NewDB()
-	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
-		return
-	}
+	db := db.GetDB()
 
 	threadID, err := strconv.Atoi(c.Param("thread_id"))
 	if err != nil {

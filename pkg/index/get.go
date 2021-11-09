@@ -11,14 +11,10 @@ import (
 )
 
 func Get(c *gin.Context) {
-	db, err := db.NewDB()
-	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
-		return
-	}
+	db := db.GetDB()
 
 	threads := []domain.Thread{}
-	err = db.Select(&threads, "SELECT thread_id, title, created_at, user_id, user_name, category_id, category_name FROM threads_with_user_category LIMIT 10")
+	err := db.Select(&threads, "SELECT thread_id, title, created_at, user_id, user_name, category_id, category_name FROM threads_with_user_category LIMIT 10")
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return

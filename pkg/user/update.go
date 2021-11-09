@@ -11,11 +11,7 @@ import (
 )
 
 func UpdateRole(c *gin.Context) {
-	db, err := db.NewDB()
-	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
-		return
-	}
+	db := db.GetDB()
 
 	if role := auth.GetUserRole(c); role != domain.OWNER {
 		c.String(http.StatusUnauthorized, "you are not owner")

@@ -11,13 +11,10 @@ import (
 )
 
 func Delete(c *gin.Context) {
-	db, err := db.NewDB()
-	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
-		return
-	}
+	db := db.GetDB()
 
 	comment := domain.Comment{}
+	var err error
 	comment.CommentID, err = strconv.Atoi(c.Param("comment_id"))
 	if err != nil {
 		c.String(http.StatusBadRequest, err.Error())

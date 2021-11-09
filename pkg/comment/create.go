@@ -12,11 +12,7 @@ import (
 )
 
 func Create(c *gin.Context) {
-	db, err := db.NewDB()
-	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
-		return
-	}
+	db := db.GetDB()
 
 	comment := domain.Comment{}
 	comment.Content = c.PostForm("comment_content")
@@ -24,6 +20,7 @@ func Create(c *gin.Context) {
 		c.String(http.StatusBadRequest, "comment's content cannot be null")
 		return
 	}
+	var err error
 	comment.ThreadID, err = strconv.Atoi(c.Param("thread_id"))
 	if err != nil {
 		c.String(http.StatusBadRequest, err.Error())

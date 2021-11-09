@@ -15,11 +15,7 @@ import (
 )
 
 func Get(c *gin.Context) {
-	db, err := db.NewDB()
-	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
-		return
-	}
+	db := db.GetDB()
 
 	searchQuery := c.Query("query")
 	words := strings.Fields(searchQuery)

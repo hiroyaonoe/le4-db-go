@@ -35,10 +35,7 @@ func authenticate(c *gin.Context) error {
 		return err
 	}
 
-	db, err := db.NewDB()
-	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
-	}
+	db := db.GetDB()
 	user := domain.User{}
 	err = db.Get(&user, "SELECT * FROM users WHERE user_id = $1", userID)
 	if err != nil {
