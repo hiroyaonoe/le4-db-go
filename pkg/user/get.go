@@ -15,11 +15,7 @@ import (
 )
 
 func Get(c *gin.Context) {
-	db, err := db.NewDB()
-	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
-		return
-	}
+	db := db.GetDB()
 
 	userID, err := strconv.Atoi(c.Param("user_id"))
 	if err != nil {

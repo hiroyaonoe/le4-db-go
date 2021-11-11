@@ -15,11 +15,7 @@ import (
 )
 
 func Get(c *gin.Context) {
-	db, err := db.NewDB()
-	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
-		return
-	}
+	db := db.GetDB()
 
 	searchQuery := c.Query("query")
 	words := strings.Fields(searchQuery)
@@ -82,7 +78,7 @@ func Get(c *gin.Context) {
 
 	likeBuilders := make([]builder.Builder, len(words))
 	for i := 0; i < len(words); i++ {
-		likeBuilders[i] = builder.Word("title LIKE ?")
+		likeBuilders[i] = builder.Word("title ILIKE ?")
 	}
 	queryBuilder := builder.Or(likeBuilders...)
 	queryBuilder = builder.And(queryBuilder, categoryBuilder, tagBuilder, startDateBuilder, endDateBuilder)
@@ -143,7 +139,7 @@ func Get(c *gin.Context) {
 		query += " NATURAL JOIN add_tags"
 	}
 	for i := 0; i < len(words); i++ {
-		likeBuilders[i] = builder.Word("content LIKE ?")
+		likeBuilders[i] = builder.Word("content ILIKE ?")
 	}
 	queryBuilder = builder.Or(likeBuilders...)
 	queryBuilder = builder.And(queryBuilder, categoryBuilder, tagBuilder, startDateBuilder, endDateBuilder)

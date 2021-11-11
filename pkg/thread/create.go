@@ -14,11 +14,7 @@ import (
 )
 
 func Create(c *gin.Context) {
-	db, err := db.NewDB()
-	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
-		return
-	}
+	db := db.GetDB()
 
 	thread := domain.Thread{}
 	thread.Title = c.PostForm("thread_title")
@@ -27,6 +23,7 @@ func Create(c *gin.Context) {
 		return
 	}
 	thread.UserID = auth.GetUserID(c)
+	var err error
 	thread.CategoryID, err = strconv.Atoi(c.PostForm("category_id"))
 	if err != nil {
 		c.String(http.StatusBadRequest, err.Error())

@@ -12,17 +12,13 @@ import (
 )
 
 func Post(c *gin.Context) {
-	db, err := db.NewDB()
-	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
-		return
-	}
+	db := db.GetDB()
 
 	userName := c.PostForm("user_name")
 	password := c.PostForm("password")
 
 	user := domain.User{}
-	err = db.Get(&user, "SELECT * FROM users WHERE name = $1", userName)
+	err := db.Get(&user, "SELECT * FROM users WHERE name = $1", userName)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			c.HTML(http.StatusOK, "login.html", gin.H{

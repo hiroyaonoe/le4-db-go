@@ -1,21 +1,35 @@
 package db
 
 import (
-	"fmt"
+	"os"
 
 	"github.com/hiroyaonoe/le4-db-go/config"
 	"github.com/jmoiron/sqlx"
-	_ "github.com/lib/pq"
+	"github.com/lib/pq"
+	"github.com/rs/zerolog"
+	sqldblogger "github.com/simukti/sqldb-logger"
+	"github.com/simukti/sqldb-logger/logadapter/zerologadapter"
 )
 
-func NewDB() (*sqlx.DB, error) {
-	db, err := sqlx.Connect("postgres", config.DSN())
-	if err != nil {
-		return nil, fmt.Errorf("failed to open PostgreSQL: %w", err)
-	}
+var (
+	db *sqlx.DB
+)
+
+func InitDB() {
+	logger := zerolog.New(
+		zerolog.ConsoleWriter{Out: os.Stdout, NoColor: false},
+	)
+	dbrow := sqldblogger.OpenDriver(
+		config.DSN(),
+		pq.Driver{},
+		zerologadapter.New(logger),
+	)
+	db = sqlx.NewDb(dbrow, "postgres")
 
 	db.SetMaxIdleConns(100)
 	db.SetMaxOpenConns(100)
+}
 
-	return db, nil
+func GetDB() *sqlx.DB {
+	return db
 }

@@ -11,11 +11,7 @@ import (
 )
 
 func Create(c *gin.Context) {
-	db, err := db.NewDB()
-	if err != nil {
-		c.String(http.StatusInternalServerError, err.Error())
-		return
-	}
+	db := db.GetDB()
 
 	user := domain.User{}
 	user.Name = c.PostForm("user_name")
@@ -23,6 +19,7 @@ func Create(c *gin.Context) {
 		c.String(http.StatusBadRequest, "user's name cannot be null")
 		return
 	}
+	var err error
 	user.Password, err = domain.NewPassword(c.PostForm("password"))
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())

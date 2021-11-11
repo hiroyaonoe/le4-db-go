@@ -4,6 +4,7 @@ import (
 	method "github.com/bu/gin-method-override"
 	"github.com/gin-gonic/gin"
 	"github.com/hiroyaonoe/le4-db-go/config"
+	"github.com/hiroyaonoe/le4-db-go/db"
 	"github.com/hiroyaonoe/le4-db-go/lib/session"
 	"github.com/hiroyaonoe/le4-db-go/pkg/auth"
 	"github.com/hiroyaonoe/le4-db-go/pkg/comment"
@@ -17,6 +18,8 @@ import (
 )
 
 func main() {
+	db.InitDB()
+
 	e := gin.Default()
 
 	e.Use(session.NewStore("secret", "mysession"))
