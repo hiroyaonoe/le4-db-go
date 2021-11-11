@@ -10,16 +10,19 @@
     <option value="owner" {{ if eq .user.Role "owner" }}selected{{ end }} >owner</option>
 </select>
 <input type="hidden" name="_method" value="PUT">
-<input type="submit" value="変更"/>
+<input type="submit" value="owner権限で変更"/>
 </form>
 {{else}}
 権限: {{.user.Role}}<br/><br/>
 {{end}}
 {{if or (eq .login_user_id .user.UserID) (eq .login_user_role "owner")}}
-ユーザーを削除する<br/>
 <form action="/user/{{.user.UserID}}" method="POST">
 <input type="hidden" name="_method" value="DELETE">
-<input type="submit" value="削除"/>
+    {{if eq .login_user_id .user.UserID}}
+    <input type="submit" value="ユーザーを削除"/>
+    {{else}}
+    <input type="submit" value="owner権限でユーザーを削除"/>
+    {{end}}
 </form>
 {{end}}
 <br/>

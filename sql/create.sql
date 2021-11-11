@@ -1,3 +1,6 @@
+DROP SCHEMA public CASCADE;
+CREATE SCHEMA public;
+
 CREATE TYPE role AS ENUM ('member', 'admin', 'owner');
 
 CREATE TABLE users (
@@ -34,7 +37,7 @@ CREATE INDEX tags_name_index ON tags(name);
 CREATE TABLE post_threads (
   thread_id INTEGER PRIMARY KEY,
   user_id INTEGER NOT NULL,
-  created_at TIMESTAMP,
+  created_at TIMESTAMP WITH TIME ZONE,
   FOREIGN KEY (thread_id) REFERENCES threads(thread_id) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -44,7 +47,7 @@ CREATE TABLE post_comments (
   comment_id INTEGER, 
   thread_id INTEGER,
   user_id INTEGER NOT NULL,
-  created_at TIMESTAMP,
+  created_at TIMESTAMP WITH TIME ZONE,
   PRIMARY KEY (comment_id, thread_id),
   FOREIGN KEY (comment_id, thread_id) REFERENCES comments(comment_id, thread_id) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE
