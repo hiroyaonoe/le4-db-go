@@ -5,6 +5,7 @@ INSERT INTO users(user_id, role, name, password) VALUES
     (4, 'member', 'member2', '$2a$10$0GhJAGgh7OlyGep75iyFY.omBBj.QdqFuin2/PYPxc34yLnU6P.uq'),
     (5, 'member', 'member3', '$2a$10$0GhJAGgh7OlyGep75iyFY.omBBj.QdqFuin2/PYPxc34yLnU6P.uq')
 ;
+SELECT setval('users_user_id_seq', 6, false);
 
 INSERT INTO categories(category_id, name) VALUES
     (1, 'ごはん'),
@@ -18,6 +19,7 @@ INSERT INTO categories(category_id, name) VALUES
     (9, 'ドラマ'),
     (10, 'スポーツ')
 ;
+SELECT setval('categories_category_id_seq', 11, false);
 
 INSERT INTO tags(tag_id, name) VALUES
     (1, 'AAA'),
@@ -30,6 +32,7 @@ INSERT INTO tags(tag_id, name) VALUES
     (8, '野球'),
     (9, 'ジャズ')
 ;
+SELECT setval('tags_tag_id_seq', 10, false);
 
 INSERT INTO threads(thread_id, title) VALUES
     (1, '今日の昼飯を言ってくスレ'),
@@ -54,6 +57,7 @@ INSERT INTO threads(thread_id, title) VALUES
     (20, '高校野球実況 2'),
     (21, '高校野球実況 3')
 ;
+SELECT setval('threads_thread_id_seq', 22, false);
 
 INSERT INTO post_threads(thread_id, user_id, created_at) VALUES
     (1, 3, '2021-11-09 06:15:19.716851 +9:00'),
@@ -136,6 +140,7 @@ INSERT INTO comments(comment_id, thread_id, content) VALUES
     (7, 5, 'XXXXきた'),
     (8, 5, 'かわいいXXXX')
 ;
+SELECT setval('comments_comment_id_seq', 9, false);
 
 INSERT INTO post_comments(comment_id, thread_id, user_id, created_at) VALUES
     (1, 5, 2, '2021-11-09 20:26:44.716851 +9:00'),
