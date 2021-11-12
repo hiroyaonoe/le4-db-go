@@ -1,7 +1,6 @@
 {{define "threads"}}
 <table border="1">
     <tr>
-        <th>ID</th>
         <th>タイトル</th>
         {{with .is_user_page}}{{else}}<th>作成ユーザー</th>{{end}}
         <th>作成日時</th>
@@ -12,7 +11,6 @@
 
     {{range $i, $v := .threads}}
     <tr>
-        <td>{{$v.ThreadID}}</td>
         <td><a href="/thread/{{$v.ThreadID}}">{{$v.Title}}</a></td>
         {{with $.is_user_page}}{{else}}<td><a href="/user/{{$v.UserID}}">{{$v.UserName}}</a></td>{{end}}
         <td>{{$v.CreatedAt}}</a></td>
