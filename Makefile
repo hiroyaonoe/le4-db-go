@@ -1,9 +1,9 @@
-ENV_FILE := .env
-ENV := $(shell cat $(ENV_FILE))
+include .env
+.EXPORT_ALL_VARIABLES:
 
 .PHONY:run
 run:
-	$(ENV) go run main.go
+	go run main.go
 
 .PHONY:fmt
 fmt:
@@ -11,5 +11,5 @@ fmt:
 
 .PHONY:init-db
 init-db:
-	cat sql/create.sql sql/view.sql sql/insert.sql | PGPASSWORD=postgres psql -h localhost -U postgres le4db
+	cat sql/create.sql sql/view.sql sql/insert.sql | PGPASSWORD=$(DB_PASSWORD) psql -h $(DB_HOST) -U $(DB_USER) $(DB_NAME)
 
