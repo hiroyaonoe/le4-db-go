@@ -15,6 +15,7 @@ var (
 	db *sqlx.DB
 )
 
+// InitDB はDBへのコネクションを構成する
 func InitDB() {
 	logger := zerolog.New(
 		zerolog.ConsoleWriter{Out: os.Stdout, NoColor: false},
@@ -30,6 +31,7 @@ func InitDB() {
 	db.SetMaxOpenConns(100)
 }
 
+// GetDB は構成済みのDBへのコネクションを返す
 func GetDB() *sqlx.DB {
 	return db
 }

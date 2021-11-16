@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// DateTime は文字列に変換するフォーマットが定められたtime.Time型
 type DateTime struct {
 	t time.Time
 }

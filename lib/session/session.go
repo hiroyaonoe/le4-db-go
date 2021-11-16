@@ -1,3 +1,4 @@
+// Package session はセッションでのユーザーIDを管理する
 package session
 
 import (
