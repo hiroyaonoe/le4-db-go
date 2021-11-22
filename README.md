@@ -15,3 +15,13 @@
 ├── sql    # テーブルやビュー，初期データを定義する
 └── view   # HTMLテンプレートファイルを定義する
 ```
+
+# 初期ユーザー一覧
+| user_id | name    | password | role   |
+|:-------:|:-------:|:--------:|:------:|
+| 1       | owner1  | owner    | owner  |
+| 2       | admin1  | admin    | admin  |
+| 3       | member1 | member   | member |
+| 4       | member2 | member   | member |
+| 5       | member3 | member   | member |
+
