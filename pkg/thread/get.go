@@ -37,7 +37,7 @@ func Get(c *gin.Context) {
 	}
 
 	comments := []domain.Comment{}
-	query = "SELECT comment_id, thread_id, content, created_at, user_id, user_name " + 
+	query = "SELECT comment_id, thread_id, content, created_at, user_id, user_name " +
 		"FROM comments_with_user " +
 		"WHERE thread_id = $1 " +
 		"ORDER BY created_at ASC"
