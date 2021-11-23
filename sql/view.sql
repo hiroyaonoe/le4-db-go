@@ -42,20 +42,31 @@ FROM comments
 GROUP BY thread_id
 ;
 
-CREATE VIEW comments_with_user_thread AS
+CREATE VIEW comments_with_user AS
 SELECT
-    comments.content,
+    content,
     comments.comment_id,
     comments.thread_id,
-    threads.title AS thread_title,
-    post_comments.created_at,
-    post_comments.user_id,
-    users.name AS user_name
+    created_at,
+    user_id,
+    name AS user_name
 FROM comments
 JOIN post_comments
     ON comments.thread_id = post_comments.thread_id
     AND comments.comment_id = post_comments.comment_id
-JOIN threads ON comments.thread_id = threads.thread_id
-JOIN users ON post_comments.user_id = users.user_id
+NATURAL JOIN users
+;
+
+CREATE VIEW comments_with_user_thread AS
+SELECT
+    content,
+    comment_id,
+    thread_id,
+    created_at,
+    user_id,
+    user_name,
+    title AS thread_title
+FROM comments_with_user
+NATURAL JOIN threads
 ORDER BY created_at DESC
 ;
