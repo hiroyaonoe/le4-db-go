@@ -74,9 +74,9 @@ func Delete(c *gin.Context) {
 	}
 
 	query = "DELETE FROM comments " +
-		"WHERE comment_id IN " +
+		"WHERE (thread_id, comment_id) IN " +
 		"(" +
-		"	SELECT comment_id " +
+		"	SELECT thread_id, comment_id " +
 		"	FROM post_comments " +
 		"	WHERE user_id = $1 " +
 		")" // コメントの削除
