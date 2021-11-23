@@ -32,7 +32,6 @@ CREATE TABLE tags (
   tag_id SERIAL PRIMARY KEY,
   name   TEXT   NOT NULL UNIQUE
 );
-CREATE INDEX tags_name_index ON tags(name);
 
 CREATE TABLE post_threads (
   thread_id INTEGER PRIMARY KEY,
