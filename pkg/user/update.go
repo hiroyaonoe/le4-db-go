@@ -31,20 +31,29 @@ func UpdateRole(c *gin.Context) {
 		return
 	}
 
+	tx, err := db.Beginx()
+	if err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+		return
+	}
+	defer tx.Rollback()
+
 	if userID == auth.GetUserID(c) { // ownerは一人以上必要
 		var cnt int
-		err = db.Get(&cnt, "SELECT count(*) FROM users WHERE role = 'owner'")
+		err = tx.Get(&cnt, "SELECT count(*) FROM users WHERE role = 'owner'")
 		if cnt <= 1 {
 			c.String(http.StatusBadRequest, "owner needs at least 1")
 			return
 		}
 	}
 
-	_, err = db.Exec("UPDATE users SET role = $1 WHERE user_ID = $2", newRole, userID)
+	_, err = tx.Exec("UPDATE users SET role = $1 WHERE user_ID = $2", newRole, userID)
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	tx.Commit()
 
 	c.Redirect(http.StatusSeeOther, "/user/"+userIDStr)
 	return
